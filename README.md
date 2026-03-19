@@ -2,17 +2,33 @@
 
 Browser-based cooking game prototype built with plain HTML, CSS, and JavaScript.
 
-## Run
+## Local Development
 
-Open [/Users/mohraska/Desktop/dev/karleen-learn/index.html](/Users/mohraska/Desktop/dev/karleen-learn/index.html) in a browser.
+### Option 1: Open it directly
 
-If you want a local server:
+Open [`C:\Users\kikym\OneDrive\Desktop\develop\cooking-ivy\index.html`](C:\Users\kikym\OneDrive\Desktop\develop\cooking-ivy\index.html) in your browser.
 
-```bash
-python3 -m http.server 8000
+### Option 2: Run the included PowerShell dev server
+
+This project now includes a small Windows-friendly static server, so you can run it locally even if Python or Node is not installed.
+
+From the project folder, run:
+
+```powershell
+powershell -ExecutionPolicy Bypass -File .\scripts\serve.ps1
 ```
 
-Then visit `http://localhost:8000`.
+Then open [http://localhost:8000](http://localhost:8000).
+
+If you want a different port:
+
+```powershell
+powershell -ExecutionPolicy Bypass -File .\scripts\serve.ps1 -Port 3000
+```
+
+### Option 3: Use VS Code Live Server
+
+If you use VS Code, install the recommended `Live Server` extension for quick reloads.
 
 ## What changed
 
