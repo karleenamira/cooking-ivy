@@ -52,3 +52,55 @@ If you use VS Code, install the recommended `Live Server` extension for quick re
 - Spaghetti Carbonara
 - Blueberry Muffins
 - Sourdough Loaf
+- Berry Buttermilk Pancakes
+- Egg Fried Rice
+- Creamy Mac and Cheese
+- Cheesy Chicken Quesadillas
+- Turkey Meatballs
+- Broccoli Alfredo Bake
+- Miso Chicken Ramen
+- Skillet Lasagna
+- Strawberry Glazed Donuts
+- Green Chicken Enchiladas
+- Brown Butter Gnocchi
+- Pork Chive Dumplings
+- Chicken and Pea Paella
+- Berry Tiramisu Cups
+- Chicken Pot Pie
+- Herby Falafel Wraps
+- Mushroom Risotto
+- Honey Pistachio Baklava
+- Colorful Bibimbap
+- Chocolate Croissants
+- Kimchi Fried Rice
+- Sunny Lemon Bars
+- Cheesy Baked Ziti
+- Chicken Satay Skewers
+- Creamy Pumpkin Soup
+- Cinnamon Sugar Churros
+- Basil Pesto Pasta
+- Chicken Parmesan
+- Walnut Banana Bread
+- Beef Bulgogi Bowls
+- Brown Sugar Apple Crisp
+- Tuna Mayo Onigiri
+- Spiced Veggie Samosas
+- Sticky Toffee Pudding
+- Teriyaki Meatballs
+- Spinach Ricotta Shells
+- Mango Sago Cups
+- Lamb Kofta Skewers
+- Breakfast Burritos
+- Creme Brulee Toast
+- Shakshuka Skillet
+- Spicy Peanut Noodles
+- Classic Carrot Cake
+- Beef Empanadas
+- Sweet and Sour Chicken
+- Tres Leches Cake
+- Miso Salmon Rice Bowls
+- Garlic Butter Naan
+- Tomato Basil Galette
+- Matcha Roll Cake
+- Katsu Curry Plate
+- Mediterranean Orzo Salad

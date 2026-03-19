@@ -19,8 +19,9 @@
           <p class="eyebrow">Cute Browser Cooking Game</p>
           <h1>Cooking Ivy</h1>
           <p class="hero-text">
-            Play through longer recipe runs, unlock harder dishes with kitchen
-            points, and read the full real recipe once a dish is complete.
+            hello my chefs, welcome to cooking ivy! you can make 100+ repices!
+            did you know that you can get a mystery gift if you get 100
+            thousand jelly ;) i will update the game monthly! have fun chefs!!
           </p>
           <div class="hero-actions">
             <button id="playButton" class="primary-button">Cook Selected Recipe</button>
@@ -30,7 +31,7 @@
         <div class="hero-card">
           <div class="mascot-wrap">
             <div class="speech-bubble" id="mascotLine">
-              Ivy says: start with easy dishes and collect points for the fancy
+              Ivy says: start with easy dishes and collect jellys for the fancy
               ones.
             </div>
             <div class="mascot">
@@ -46,6 +47,7 @@
                 <span class="mascot-blush mascot-blush-right"></span>
               </div>
               <div class="mascot-body"></div>
+              <div class="mascot-bowl"></div>
               <div class="mascot-arm mascot-arm-left"></div>
               <div class="mascot-arm mascot-arm-right"></div>
               <div class="mascot-tail"></div>
@@ -53,10 +55,33 @@
             </div>
           </div>
           <p class="card-label">Kitchen Progress</p>
-          <h2 id="pointsTotal">0 pts</h2>
+          <h2 id="pointsTotal">0 jellys</h2>
           <p id="unlockStatus" class="hero-support">
-            Earn points by finishing dishes to unlock more recipes.
+            Earn jellys by finishing dishes to unlock more recipes.
           </p>
+          <div id="giftCard" class="gift-card hidden" aria-live="polite">
+            <p class="card-label">Mystery Gift</p>
+            <div class="gift-card-copy">
+              <h3>Ipung</h3>
+              <p id="giftStatus">Reach 100,000 jellys to meet your navy elephant gift.</p>
+            </div>
+            <button
+              id="ipungHelpButton"
+              class="gift-help-face hidden"
+              type="button"
+              aria-label="Ask Ipung for help"
+              title="Ask Ipung for help"
+            >
+              <div class="gift-elephant-ear gift-elephant-ear-left"></div>
+              <div class="gift-elephant-ear gift-elephant-ear-right"></div>
+              <div class="gift-elephant-head"></div>
+              <div class="gift-elephant-eye gift-elephant-eye-left"></div>
+              <div class="gift-elephant-eye gift-elephant-eye-right"></div>
+              <div class="gift-elephant-blush gift-elephant-blush-left"></div>
+              <div class="gift-elephant-blush gift-elephant-blush-right"></div>
+              <div class="gift-elephant-trunk"></div>
+            </button>
+          </div>
           <div class="hero-mini-stats">
             <div>
               <p class="card-label">Selected</p>

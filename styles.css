@@ -21,6 +21,7 @@
 body {
   margin: 0;
   min-height: 100vh;
+  overflow-x: hidden;
   font-family: "DM Sans", sans-serif;
   color: var(--ink);
   background:
@@ -194,6 +195,148 @@ h4 {
   margin-top: 16px;
 }
 
+.hidden {
+  display: none !important;
+}
+
+.gift-card {
+  display: grid;
+  grid-template-columns: 1fr 120px;
+  gap: 16px;
+  align-items: center;
+  margin-top: 18px;
+  padding: 16px 18px;
+  border-radius: 24px;
+  background: linear-gradient(160deg, rgba(241, 247, 255, 0.94), rgba(223, 232, 250, 0.9));
+  box-shadow: inset 0 0 0 1px rgba(65, 84, 128, 0.12);
+}
+
+.gift-card-copy {
+  display: grid;
+  gap: 6px;
+}
+
+.gift-card-copy p {
+  margin: 0;
+}
+
+.gift-elephant,
+.gift-help-face {
+  position: relative;
+  width: 96px;
+  height: 92px;
+  margin: 0 auto;
+}
+
+.gift-help-face {
+  padding: 0;
+  border: 0;
+  background: transparent;
+  cursor: pointer;
+  transition: transform 160ms ease, filter 160ms ease, opacity 160ms ease;
+}
+
+.gift-help-face:hover:not(:disabled) {
+  transform: translateY(-2px) scale(1.03);
+}
+
+.gift-help-face:disabled {
+  cursor: not-allowed;
+  opacity: 0.5;
+  filter: grayscale(0.15);
+}
+
+.gift-help-face:focus-visible {
+  outline: 3px solid rgba(28, 46, 74, 0.26);
+  outline-offset: 6px;
+  border-radius: 28px;
+}
+
+.gift-elephant-ear,
+.gift-elephant-head,
+.gift-elephant-trunk,
+.gift-elephant-eye,
+.gift-elephant-blush {
+  position: absolute;
+}
+
+.gift-elephant-ear {
+  top: 18px;
+  width: 34px;
+  height: 42px;
+  border-radius: 50%;
+  background: linear-gradient(180deg, #2a4267, #1c2e4a);
+}
+
+.gift-elephant-ear-left {
+  left: 6px;
+  transform: rotate(-22deg);
+}
+
+.gift-elephant-ear-right {
+  right: 6px;
+  transform: rotate(22deg);
+}
+
+.gift-elephant-head {
+  inset: 18px 18px 18px;
+  border-radius: 44px;
+  background: linear-gradient(180deg, #2b466f, #1c2e4a);
+  box-shadow: inset 0 8px 0 rgba(255, 255, 255, 0.12);
+}
+
+.gift-elephant-eye {
+  top: 40px;
+  width: 8px;
+  height: 10px;
+  border-radius: 999px;
+  background: #fff8fb;
+}
+
+.gift-elephant-eye-left {
+  left: 34px;
+}
+
+.gift-elephant-eye-right {
+  right: 34px;
+}
+
+.gift-elephant-blush {
+  top: 52px;
+  width: 12px;
+  height: 8px;
+  border-radius: 999px;
+  background: rgba(255, 191, 210, 0.5);
+}
+
+.gift-elephant-blush-left {
+  left: 24px;
+}
+
+.gift-elephant-blush-right {
+  right: 24px;
+}
+
+.gift-elephant-trunk {
+  left: calc(50% - 10px);
+  top: 46px;
+  width: 20px;
+  height: 44px;
+  border-radius: 14px 14px 22px 22px;
+  background: linear-gradient(180deg, #284265, #1c2e4a);
+}
+
+.gift-elephant-trunk::after {
+  content: "";
+  position: absolute;
+  left: 2px;
+  right: 2px;
+  bottom: -5px;
+  height: 12px;
+  border-radius: 999px;
+  background: rgba(255, 248, 251, 0.18);
+}
+
 .mascot-wrap {
   display: grid;
   grid-template-columns: 1fr 140px;
@@ -231,7 +374,7 @@ h4 {
 .mascot-face {
   position: absolute;
   inset: 30px 18px 52px;
-  z-index: 2;
+  z-index: 5;
   border-radius: 48% 48% 44% 44%;
   background: linear-gradient(180deg, #f6e4e6, #e8c4c8);
   box-shadow:
@@ -242,10 +385,10 @@ h4 {
 
 .mascot-ear {
   position: absolute;
-  top: 10px;
-  z-index: 1;
+  top: 4px;
+  z-index: 5;
   width: 28px;
-  height: 38px;
+  height: 52px;
   border-radius: 60% 60% 22% 22%;
   background: linear-gradient(180deg, #f3dde0, #e8c4c8);
 }
@@ -253,26 +396,26 @@ h4 {
 .mascot-ear::after {
   content: "";
   position: absolute;
-  inset: 6px;
+  inset: 7px 6px 8px;
   border-radius: inherit;
   background: rgba(250, 232, 235, 0.82);
 }
 
 .mascot-ear-left {
   left: 16px;
-  transform: rotate(-16deg);
+  transform: rotate(-18deg);
 }
 
 .mascot-ear-right {
   right: 16px;
-  transform: rotate(16deg);
+  transform: rotate(18deg);
 }
 
 .mascot-bow {
   position: absolute;
   top: 18px;
   right: 10px;
-  z-index: 3;
+  z-index: 6;
   width: 24px;
   height: 18px;
   border-radius: 999px;
@@ -467,11 +610,52 @@ h4 {
     radial-gradient(circle at 78% 50%, #f9edf0 0 10px, transparent 11px);
 }
 
+.mascot-bowl {
+  position: absolute;
+  left: 28px;
+  right: 28px;
+  bottom: 28px;
+  z-index: 7;
+  height: 38px;
+  border-radius: 0 0 48px 48px;
+  background:
+    linear-gradient(180deg, #ffbfd2 0%, #f48fb0 68%, #e36a91 100%);
+  box-shadow:
+    inset 0 4px 0 rgba(255, 232, 239, 0.7),
+    inset 0 -6px 0 rgba(199, 79, 121, 0.3),
+    0 10px 18px rgba(85, 47, 67, 0.12);
+}
+
+.mascot-bowl::before {
+  content: "";
+  position: absolute;
+  left: -4px;
+  right: -4px;
+  top: -8px;
+  height: 14px;
+  border-radius: 999px;
+  background: linear-gradient(180deg, #ffd5e3, #f7adc4);
+  box-shadow:
+    inset 0 2px 0 rgba(255, 255, 255, 0.7),
+    0 3px 6px rgba(85, 47, 67, 0.08);
+}
+
+.mascot-bowl::after {
+  content: "";
+  position: absolute;
+  left: 12px;
+  right: 12px;
+  top: -2px;
+  height: 10px;
+  border-radius: 999px;
+  background: linear-gradient(180deg, rgba(255, 248, 251, 0.92), rgba(255, 214, 228, 0.72));
+}
+
 .mascot-arm {
   position: absolute;
-  z-index: 3;
-  width: 18px;
-  height: 38px;
+  z-index: 4;
+  width: 22px;
+  height: 46px;
   border-radius: 999px;
   background: linear-gradient(180deg, #f2d4d7, #e8c4c8);
   box-shadow: inset 0 -6px 0 rgba(188, 145, 151, 0.14);
@@ -480,10 +664,10 @@ h4 {
 .mascot-arm::after {
   content: "";
   position: absolute;
-  left: -1px;
-  right: -1px;
+  left: -3px;
+  right: -3px;
   bottom: -6px;
-  height: 16px;
+  height: 20px;
   border-radius: 999px;
   background: #f6e4e6;
   box-shadow:
@@ -492,14 +676,18 @@ h4 {
 }
 
 .mascot-arm-left {
-  left: 32px;
-  bottom: 52px;
+  left: 29px;
+  bottom: 47px;
   transform: rotate(26deg);
 }
 
+.mascot-arm-left::after {
+  z-index: 8;
+}
+
 .mascot-arm-right {
-  right: 26px;
-  bottom: 48px;
+  right: 23px;
+  bottom: 43px;
   transform: rotate(-42deg);
 }
 
@@ -1659,7 +1847,8 @@ h4 {
 
 @media (max-width: 760px) {
   .page-shell {
-    width: min(100vw - 16px, 100%);
+    width: min(100%, calc(100vw - 16px));
+    margin-inline: auto;
     padding-top: 12px;
   }
 
@@ -1672,6 +1861,7 @@ h4 {
 
   .status-grid,
   .hero-mini-stats,
+  .gift-card,
   .tray-grid,
   .recipe-grid,
   .heat-stage,
