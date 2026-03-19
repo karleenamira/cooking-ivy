@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Cooking Ivy</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Chewy&family=DM+Sans:wght@400;500;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <div class="page-shell">
+      <header class="hero">
+        <div class="hero-copy">
+          <p class="eyebrow">Cute Browser Cooking Game</p>
+          <h1>Cooking Ivy</h1>
+          <p class="hero-text">
+            Play through longer recipe runs, unlock harder dishes with kitchen
+            points, and read the full real recipe once a dish is complete.
+          </p>
+          <div class="hero-actions">
+            <button id="playButton" class="primary-button">Cook Selected Recipe</button>
+          </div>
+        </div>
+
+        <div class="hero-card">
+          <div class="mascot-wrap">
+            <div class="speech-bubble" id="mascotLine">
+              Ivy says: start with easy dishes and collect points for the fancy
+              ones.
+            </div>
+            <div class="mascot">
+              <div class="mascot-ear mascot-ear-left"></div>
+              <div class="mascot-ear mascot-ear-right"></div>
+              <div class="mascot-bow"></div>
+              <div class="mascot-face">
+                <span class="mascot-eye mascot-eye-left"></span>
+                <span class="mascot-eye mascot-eye-right"></span>
+                <span class="mascot-nose"></span>
+                <span class="mascot-mouth"></span>
+                <span class="mascot-blush mascot-blush-left"></span>
+                <span class="mascot-blush mascot-blush-right"></span>
+              </div>
+              <div class="mascot-body"></div>
+              <div class="mascot-arm mascot-arm-left"></div>
+              <div class="mascot-arm mascot-arm-right"></div>
+              <div class="mascot-tail"></div>
+              <div class="mascot-whisk"></div>
+            </div>
+          </div>
+          <p class="card-label">Kitchen Progress</p>
+          <h2 id="pointsTotal">0 pts</h2>
+          <p id="unlockStatus" class="hero-support">
+            Earn points by finishing dishes to unlock more recipes.
+          </p>
+          <div class="hero-mini-stats">
+            <div>
+              <p class="card-label">Selected</p>
+              <p id="selectedRecipeName" class="hero-stat">Garlic Veggie Stir-Fry</p>
+            </div>
+            <div>
+              <p class="card-label">Unlocked</p>
+              <p id="unlockedCount" class="hero-stat">0 / 0</p>
+            </div>
+          </div>
+        </div>
+      </header>
+
+      <main class="game-layout">
+        <aside class="panel sidebar">
+          <section class="status-block">
+            <div class="status-grid">
+              <div class="status-card">
+                <p class="status-label">Recipe Step</p>
+                <p id="stepName" class="status-value">Choose a recipe</p>
+              </div>
+              <div class="status-card">
+                <p class="status-label">Run Score</p>
+                <p id="scoreValue" class="status-value">0</p>
+              </div>
+            </div>
+
+            <div class="meter-block">
+              <div class="meter-label-row">
+                <span>Recipe Progress</span>
+                <span id="progressValue">0%</span>
+              </div>
+              <div class="meter-track">
+                <div id="progressBar" class="meter-fill"></div>
+              </div>
+            </div>
+
+            <p id="instructionText" class="instruction-text">
+              Pick a recipe in the cookbook, then press Cook Selected Recipe.
+            </p>
+          </section>
+
+          <section class="recipe-detail">
+            <div class="detail-head">
+              <p class="card-label">Selected Recipe</p>
+              <h3 id="recipeTitle">Garlic Veggie Stir-Fry</h3>
+              <p id="recipeMeta" class="recipe-meta"></p>
+              <p id="recipeSummary" class="recipe-summary"></p>
+            </div>
+
+            <div class="detail-columns">
+              <div>
+                <p class="detail-label">Ingredients</p>
+                <ul id="ingredientsList" class="detail-list"></ul>
+              </div>
+              <div>
+                <p class="detail-label">Method</p>
+                <ol id="methodList" class="detail-list ordered"></ol>
+              </div>
+            </div>
+          </section>
+        </aside>
+
+        <section class="panel arena-panel">
+          <div id="gameArena" class="game-arena">
+            <div class="stage-copy">
+              <p class="arena-label">Kitchen Station</p>
+              <h3>Choose your dish</h3>
+              <p>
+                Easy recipes now have 4 mini-games, medium recipes have 6, and
+                hard recipes have 8. Ivy will show the real recipe card again
+                after you finish cooking.
+              </p>
+              <div class="step-preview"></div>
+            </div>
+          </div>
+        </section>
+      </main>
+
+      <section class="panel library-panel">
+        <div class="library-head">
+          <div>
+            <p class="card-label">Recipe Book</p>
+            <h2>Unlock More Recipes</h2>
+          </div>
+          <p class="library-copy">
+            Preview any recipe at any time, but you can only play the locked ones
+            after reaching their point requirement.
+          </p>
+        </div>
+        <div id="recipeGrid" class="recipe-grid"></div>
+      </section>
+    </div>
+
+    <script src="./game.js"></script>
+  </body>
+</html>
