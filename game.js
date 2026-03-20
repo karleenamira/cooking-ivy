@@ -1,7 +1,7 @@
 const STORAGE_KEY = "cooking-time-progress-v2";
 const JELLY_GIFT_TARGET = 100000;
-const EXPERIMENT_JELLYS = 1000000;
-const EXPERIMENT_GRANT_VERSION = "exp-1000000";
+const EXPERIMENT_JELLYS = 0;
+const EXPERIMENT_GRANT_VERSION = "reset-to-zero";
 
 const step = {
   slice(name, options = {}) {
@@ -3501,7 +3501,7 @@ function hydrateProgress() {
 
 function grantExperimentJellys() {
   if (state.experimentGrantVersion !== EXPERIMENT_GRANT_VERSION) {
-    state.totalPoints = Math.max(state.totalPoints, EXPERIMENT_JELLYS);
+    state.totalPoints = EXPERIMENT_JELLYS;
     state.experimentGrantVersion = EXPERIMENT_GRANT_VERSION;
     persistProgress();
   }
