@@ -1,7 +1,7 @@
 const STORAGE_KEY = "cooking-time-progress-v2";
 const JELLY_GIFT_TARGET = 100000;
 const EXPERIMENT_JELLYS = 0;
-const EXPERIMENT_GRANT_VERSION = "reset-to-zero";
+const EXPERIMENT_GRANT_VERSION = "reset-to-zero-v2";
 
 const step = {
   slice(name, options = {}) {
