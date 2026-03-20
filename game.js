@@ -1,7 +1,7 @@
 const STORAGE_KEY = "cooking-time-progress-v2";
 const JELLY_GIFT_TARGET = 100000;
-const EXPERIMENT_JELLYS = 10000000;
-const EXPERIMENT_GRANT_VERSION = "disabled";
+const EXPERIMENT_JELLYS = 1000000;
+const EXPERIMENT_GRANT_VERSION = "exp-1000000";
 
 const step = {
   slice(name, options = {}) {
@@ -363,6 +363,198 @@ function slugifyRecipeName(name) {
   return name.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "");
 }
 
+function getGeneratedRecipeSummary(template, main, accent, sauce, garnish) {
+  const summaryByTemplate = {
+    toast: `Crisp toast topped with ${main.toLowerCase()}, ${accent.toLowerCase()}, and a ${sauce.toLowerCase()} finish.`,
+    salad: `Fresh cups layered with ${main.toLowerCase()}, ${accent.toLowerCase()}, and a bright ${sauce.toLowerCase()} drizzle.`,
+    skillet: `A warm skillet dish with ${main.toLowerCase()}, ${accent.toLowerCase()}, and a savory ${garnish.toLowerCase()} finish.`,
+    bowl: `A cozy bowl built from ${main.toLowerCase()}, ${accent.toLowerCase()}, and a sweet ${sauce.toLowerCase()} topping.`,
+    dip: `Creamy ${main.toLowerCase()} dip with ${accent.toLowerCase()} and a soft ${garnish.toLowerCase()} finish.`,
+    wrap: `Soft wraps filled with ${main.toLowerCase()}, ${accent.toLowerCase()}, and a quick ${sauce.toLowerCase()} layer.`,
+    pancake: `Fluffy stack built around ${main.toLowerCase()} with ${accent.toLowerCase()} and ${sauce.toLowerCase()}.`,
+    pasta: `${main} pasta finished with ${sauce.toLowerCase()} and a touch of ${garnish.toLowerCase()}.`,
+    soup: `${main} soup with ${accent.toLowerCase()} and a comforting ${sauce.toLowerCase()} base.`,
+    rice: `${main} rice bowls served with ${sauce.toLowerCase()} and a final ${garnish.toLowerCase()} finish.`,
+    traybake: `${main} roasted with ${accent.toLowerCase()} and a glossy ${sauce.toLowerCase()} coating.`,
+    tacos: `${main} tacos tucked into ${accent.toLowerCase()} with ${sauce.toLowerCase()} and ${garnish.toLowerCase()}.`,
+    noodle: `${main} noodles coated in ${sauce.toLowerCase()} with ${accent.toLowerCase()} and ${garnish.toLowerCase()}.`,
+    bake: `${main} bake layered with ${accent.toLowerCase()}, ${sauce.toLowerCase()}, and ${garnish.toLowerCase()}.`,
+    pastry: `A bakery-style ${main.toLowerCase()} pastry with ${accent.toLowerCase()} and ${sauce.toLowerCase()}.`,
+    curry: `${main} curry served over ${accent.toLowerCase()} with rich ${sauce.toLowerCase()} notes.`,
+    noodlefeast: `${main} noodle feast tossed with ${sauce.toLowerCase()} and finished with ${garnish.toLowerCase()}.`,
+    layercake: `${main} layer cake stacked with ${accent.toLowerCase()} and a soft ${sauce.toLowerCase()} finish.`,
+    stuffed: `${main} filled with ${accent.toLowerCase()}, baked with ${sauce.toLowerCase()}, and finished with ${garnish.toLowerCase()}.`,
+    feast: `${main} platter served with ${accent.toLowerCase()}, ${sauce.toLowerCase()}, and ${garnish.toLowerCase()}.`,
+    dumpling: `${main} dumplings wrapped around ${accent.toLowerCase()} and served with ${sauce.toLowerCase()}.`,
+  };
+  return summaryByTemplate[template] || `${main} and ${accent} come together with ${sauce.toLowerCase()} and a ${garnish.toLowerCase()} finish.`;
+}
+
+function getGeneratedRecipeIngredients(template, difficulty, main, accent, sauce, garnish) {
+  const pantryItem = difficulty === "Hard" ? "Butter or oil for cooking" : "Olive oil";
+  const baseByTemplate = {
+    toast: ["4 toast slices", main, accent, sauce, garnish, pantryItem, "Pinch of salt", "Small sweet finish"],
+    salad: ["2 serving cups", main, accent, sauce, garnish, pantryItem, "Pinch of salt", "Fresh topping"],
+    skillet: [main, accent, "2 tbsp butter", sauce, garnish, pantryItem, "Salt", "Black pepper"],
+    bowl: [main, accent, sauce, garnish, "Crunchy topping", pantryItem, "Pinch of salt", "Sweet finish"],
+    dip: [main, accent, sauce, garnish, "Milk or cream", pantryItem, "Pinch of salt", "Serving chips or veggies"],
+    wrap: ["4 wraps", main, accent, sauce, garnish, pantryItem, "Pinch of salt", "Fresh crunch"],
+    pancake: ["Pancake or crepe batter", main, accent, sauce, garnish, pantryItem, "Pinch of salt", "Sugar"],
+    pasta: ["12 oz pasta", main, accent, sauce, garnish, pantryItem, "Salt", "Pepper"],
+    soup: [main, accent, sauce, garnish, "Broth or stock", pantryItem, "Salt", "Pepper"],
+    rice: ["3 cups cooked rice", main, accent, sauce, garnish, pantryItem, "Salt", "Pepper"],
+    traybake: [main, accent, sauce, garnish, "Roasting oil", pantryItem, "Salt", "Pepper"],
+    tacos: ["8 tortillas", main, accent, sauce, garnish, pantryItem, "Salt", "Pepper"],
+    noodle: ["12 oz noodles", main, accent, sauce, garnish, pantryItem, "Salt", "Sesame or herbs"],
+    bake: [main, accent, sauce, garnish, "Baking base", pantryItem, "Salt", "Pepper"],
+    pastry: ["1 pastry base", main, accent, sauce, garnish, pantryItem, "Sugar", "Pinch of salt"],
+    curry: [main, accent, sauce, garnish, "Spice base", pantryItem, "Salt", "Pepper"],
+    noodlefeast: ["12 oz noodles", main, accent, sauce, garnish, pantryItem, "Salt", "Pepper"],
+    layercake: ["Cake batter base", main, accent, sauce, garnish, pantryItem, "Sugar", "Vanilla"],
+    stuffed: [main, accent, sauce, garnish, "Filling base", pantryItem, "Salt", "Pepper"],
+    feast: [main, accent, sauce, garnish, "Roasting fat", pantryItem, "Salt", "Pepper"],
+    dumpling: ["Dumpling wrappers", main, accent, sauce, garnish, pantryItem, "Salt", "Pepper"],
+  };
+  return baseByTemplate[template] || [main, accent, sauce, garnish, pantryItem, "Salt", "Pepper", "Finishing touch"];
+}
+
+function getGeneratedRecipeMethod(template, difficulty, main, accent, sauce, garnish) {
+  const methodByTemplate = {
+    toast: [
+      `Prep the ${main.toLowerCase()} and warm the toast base.`,
+      `Layer the ${accent.toLowerCase()} over the toast.`,
+      `Toast until the edges feel crisp and ready.`,
+      `Finish with ${sauce.toLowerCase()} and ${garnish.toLowerCase()} before serving.`,
+    ],
+    salad: [
+      `Prep the ${main.toLowerCase()} and ${accent.toLowerCase()} for layering.`,
+      `Build the cups in tidy fresh layers.`,
+      `Spoon over the ${sauce.toLowerCase()} carefully.`,
+      `Finish with ${garnish.toLowerCase()} and serve right away.`,
+    ],
+    skillet: [
+      `Prep the ${main.toLowerCase()} and warm the skillet.`,
+      `Cook the ${accent.toLowerCase()} until the pan smells savory.`,
+      `Stir everything together until it looks glossy and cooked through.`,
+      `Finish with ${garnish.toLowerCase()} before serving warm.`,
+    ],
+    bowl: [
+      `Build the bowl base with ${main.toLowerCase()}.`,
+      `Layer in the ${accent.toLowerCase()} for texture and color.`,
+      `Drizzle over the ${sauce.toLowerCase()} in a smooth layer.`,
+      `Finish with ${garnish.toLowerCase()} and serve immediately.`,
+    ],
+    dip: [
+      `Whisk the ${main.toLowerCase()} base until smooth.`,
+      `Warm in the ${accent.toLowerCase()} gently.`,
+      `Cook until the dip turns creamy and glossy.`,
+      `Finish with ${garnish.toLowerCase()} and serve warm.`,
+    ],
+    wrap: [
+      `Prep the ${main.toLowerCase()} filling and warm the wraps.`,
+      `Layer in the ${accent.toLowerCase()} evenly.`,
+      `Add the ${sauce.toLowerCase()} so each wrap stays flavorful.`,
+      `Roll tight and finish with ${garnish.toLowerCase()}.`,
+    ],
+    pancake: [
+      `Mix the batter and prep the ${main.toLowerCase()} topping.`,
+      `Cook even rounds until lightly golden.`,
+      `Stack with ${accent.toLowerCase()} between the layers.`,
+      `Finish with ${sauce.toLowerCase()} and ${garnish.toLowerCase()}.`,
+    ],
+    pasta: [
+      `Boil the pasta and prep the ${main.toLowerCase()}.`,
+      `Make the ${sauce.toLowerCase()} until it turns smooth.`,
+      `Toss the pasta with ${accent.toLowerCase()} and the sauce.`,
+      `Finish with ${garnish.toLowerCase()} before serving.`,
+    ],
+    soup: [
+      `Prep the ${main.toLowerCase()} and build the soup base.`,
+      `Cook the ${accent.toLowerCase()} until soft and fragrant.`,
+      `Simmer with the ${sauce.toLowerCase()} until the pot tastes balanced.`,
+      `Finish with ${garnish.toLowerCase()} and serve warm.`,
+    ],
+    rice: [
+      `Prep the ${main.toLowerCase()} and warm the rice.`,
+      `Cook the topping until glossy and cooked through.`,
+      `Spoon over the ${sauce.toLowerCase()} while tossing gently.`,
+      `Finish with ${garnish.toLowerCase()} before serving.`,
+    ],
+    traybake: [
+      `Prep the ${main.toLowerCase()} and ${accent.toLowerCase()} for roasting.`,
+      `Season and spread everything across the tray.`,
+      `Roast until the edges caramelize and the center stays tender.`,
+      `Finish with ${garnish.toLowerCase()} before serving.`,
+    ],
+    tacos: [
+      `Cook the ${main.toLowerCase()} filling until flavorful.`,
+      `Warm the ${accent.toLowerCase()} and prep the toppings.`,
+      `Build each taco with the filling and ${sauce.toLowerCase()}.`,
+      `Finish with ${garnish.toLowerCase()} and serve.`,
+    ],
+    noodle: [
+      `Cook the noodles and prep the ${main.toLowerCase()} topping.`,
+      `Whisk the ${sauce.toLowerCase()} until smooth.`,
+      `Toss the noodles with ${accent.toLowerCase()} and the sauce.`,
+      `Finish with ${garnish.toLowerCase()} before serving.`,
+    ],
+    bake: [
+      `Prep the ${main.toLowerCase()} base and the baking dish.`,
+      `Layer in the ${accent.toLowerCase()} and ${sauce.toLowerCase()}.`,
+      `Bake until the top turns golden and bubbling.`,
+      `Finish with ${garnish.toLowerCase()} before serving.`,
+    ],
+    pastry: [
+      `Prepare the pastry base and arrange the ${main.toLowerCase()}.`,
+      `Fill with ${accent.toLowerCase()} for a bakery-style center.`,
+      `Bake until flaky and deeply golden.`,
+      `Finish with ${sauce.toLowerCase()} and ${garnish.toLowerCase()}.`,
+    ],
+    curry: [
+      `Cook the ${main.toLowerCase()} with spices until fragrant.`,
+      `Build the ${sauce.toLowerCase()} until rich and smooth.`,
+      `Serve over the ${accent.toLowerCase()} while still hot.`,
+      `Finish with ${garnish.toLowerCase()} before serving.`,
+    ],
+    noodlefeast: [
+      `Cook the noodles and prep the ${main.toLowerCase()} topping.`,
+      `Whisk the ${sauce.toLowerCase()} until silky.`,
+      `Toss the noodles with ${accent.toLowerCase()} and the sauce.`,
+      `Finish with ${garnish.toLowerCase()} and plate generously.`,
+    ],
+    layercake: [
+      `Mix and bake the cake layers until springy.`,
+      `Whisk the ${accent.toLowerCase()} filling or frosting smooth.`,
+      `Stack the layers with ${sauce.toLowerCase()} between them.`,
+      `Finish with ${garnish.toLowerCase()} and present the cake.`,
+    ],
+    stuffed: [
+      `Prep the ${main.toLowerCase()} shells and mix the filling.`,
+      `Fill with ${accent.toLowerCase()} and tuck everything neatly in place.`,
+      `Bake with ${sauce.toLowerCase()} until tender.`,
+      `Finish with ${garnish.toLowerCase()} before serving.`,
+    ],
+    feast: [
+      `Prep the ${main.toLowerCase()} centerpiece and the ${accent.toLowerCase()} sides.`,
+      `Roast until everything turns golden and tender.`,
+      `Whisk the ${sauce.toLowerCase()} for the platter.`,
+      `Finish with ${garnish.toLowerCase()} and carve for serving.`,
+    ],
+    dumpling: [
+      `Mix the ${main.toLowerCase()} filling until cohesive.`,
+      `Fill the wrappers with ${accent.toLowerCase()} and seal well.`,
+      `Cook until tender with a crisp finish where needed.`,
+      `Serve with ${sauce.toLowerCase()} and ${garnish.toLowerCase()}.`,
+    ],
+  };
+  return methodByTemplate[template] || [
+    `Prep the ${main.toLowerCase()} and ${accent.toLowerCase()}.`,
+    `Build the dish with ${sauce.toLowerCase()} in stages.`,
+    `Cook carefully until the texture feels right for a ${difficulty.toLowerCase()} recipe.`,
+    `Finish with ${garnish.toLowerCase()} before serving.`,
+  ];
+}
+
 function getGeneratedRecipeSteps(template, difficulty, main, accent, sauce, garnish) {
   if (difficulty === "Easy") {
     const easyStepsByTemplate = {
@@ -562,23 +754,9 @@ function createGeneratedRecipe([name, template, main, accent, sauce, garnish], d
     difficulty,
     requiredPoints: config.pointsStart + index * config.pointStep,
     servings: config.servings,
-    summary: `${main} and ${accent} come together with ${sauce.toLowerCase()} and a ${garnish.toLowerCase()} finish.`,
-    ingredients: [
-      `${main}`,
-      `${accent}`,
-      `${sauce}`,
-      `${garnish}`,
-      "Salt",
-      difficulty === "Hard" ? "Butter or oil" : "Olive oil",
-      difficulty === "Easy" ? "A quick pantry base" : "A simple sauce base",
-      difficulty === "Hard" ? "A final garnish" : "A small finishing touch",
-    ],
-    method: [
-      `Prep the ${main.toLowerCase()} and ${accent.toLowerCase()}.`,
-      `Build the dish with ${sauce.toLowerCase()} in stages.`,
-      `Cook carefully until the texture feels right for a ${difficulty.toLowerCase()} recipe.`,
-      `Finish with ${garnish.toLowerCase()} before serving.`,
-    ],
+    summary: getGeneratedRecipeSummary(template, main, accent, sauce, garnish),
+    ingredients: getGeneratedRecipeIngredients(template, difficulty, main, accent, sauce, garnish),
+    method: getGeneratedRecipeMethod(template, difficulty, main, accent, sauce, garnish),
     baseReward: config.rewardStart + index * config.rewardStep,
     steps: getGeneratedRecipeSteps(template, difficulty, main, accent, sauce, garnish),
   };
@@ -3196,6 +3374,8 @@ const recipes = [
 ];
 
 const ui = {
+  loadingScreen: document.querySelector("#loadingScreen"),
+  startScreenButton: document.querySelector("#startScreenButton"),
   playButton: document.querySelector("#playButton"),
   pointsTotal: document.querySelector("#pointsTotal"),
   unlockStatus: document.querySelector("#unlockStatus"),
@@ -3203,6 +3383,7 @@ const ui = {
   giftStatus: document.querySelector("#giftStatus"),
   ipungHelpButton: document.querySelector("#ipungHelpButton"),
   selectedRecipeName: document.querySelector("#selectedRecipeName"),
+  selectedRecipeNameHero: document.querySelector("#selectedRecipeNameHero"),
   unlockedCount: document.querySelector("#unlockedCount"),
   stepName: document.querySelector("#stepName"),
   scoreValue: document.querySelector("#scoreValue"),
@@ -3246,11 +3427,21 @@ function init() {
   }
   ui.playButton.addEventListener("click", handlePlayClick);
   ui.ipungHelpButton.addEventListener("click", handleIpungHelpClick);
+  if (ui.startScreenButton) {
+    ui.startScreenButton.addEventListener("click", hideLoadingScreen);
+  }
   renderRecipeGrid();
   renderSelectedRecipe();
   renderIdleArena();
   updateHeader();
   updateRunStatus();
+}
+
+function hideLoadingScreen() {
+  if (!ui.loadingScreen) {
+    return;
+  }
+  ui.loadingScreen.classList.add("hidden");
 }
 
 function hydrateProgress() {
@@ -3272,7 +3463,7 @@ function hydrateProgress() {
 
 function grantExperimentJellys() {
   if (state.experimentGrantVersion !== EXPERIMENT_GRANT_VERSION) {
-    state.totalPoints = 0;
+    state.totalPoints = Math.max(state.totalPoints, EXPERIMENT_JELLYS);
     state.experimentGrantVersion = EXPERIMENT_GRANT_VERSION;
     persistProgress();
   }
@@ -3800,9 +3991,43 @@ function renderHeatGame(currentStep, completeStep) {
   sync();
 }
 
+function getPortionVisualProfile(currentStep) {
+  const source = `${currentStep.name} ${currentStep.fillLabel}`.toLowerCase();
+  const ingredientPatterns = [
+    { key: "dough", pattern: /dough|naan|loaf|bread/ },
+    { key: "batter", pattern: /batter|milk soak/ },
+    { key: "rice", pattern: /rice|sago/ },
+    { key: "noodles", pattern: /noodles|pasta|shells|enchiladas/ },
+    { key: "cheese", pattern: /cheese|ricotta|cream|yogurt/ },
+    { key: "fruit", pattern: /mango|apples|tomatoes/ },
+    { key: "chocolate", pattern: /chocolate|granola|shortbread|ladyfingers/ },
+    { key: "protein", pattern: /meatballs|kofta|falafel|chicken|nuggets|eggs/ },
+    { key: "sauce", pattern: /sauce|marinara|curry/ },
+    { key: "leaf", pattern: /phyllo|nori|wrappers/ },
+  ];
+
+  const ingredientClass =
+    ingredientPatterns.find(({ pattern }) => pattern.test(source))?.key ?? "filling";
+
+  let hash = 0;
+  for (const char of source) {
+    hash = (hash * 31 + char.charCodeAt(0)) >>> 0;
+  }
+
+  const hue = hash % 360;
+  const accent = `hsl(${hue} 72% 78%)`;
+  const accentDeep = `hsl(${hue} 54% 56%)`;
+  const card = `hsl(${(hue + 18) % 360} 70% 96%)`;
+  const cardShadow = `hsl(${hue} 45% 35% / 0.14)`;
+
+  return {
+    ingredientClass,
+    style: `--portion-card:${card};--portion-accent:${accent};--portion-accent-deep:${accentDeep};--portion-shadow:${cardShadow};`,
+  };
+}
+
 function renderPortionGame(currentStep, completeStep) {
-  const isDough = /dough/i.test(currentStep.fillLabel);
-  const isBatter = /batter/i.test(currentStep.fillLabel);
+  const portionVisual = getPortionVisualProfile(currentStep);
   ui.gameArena.innerHTML = `
     <div class="minigame">
       <div class="minigame-head">
@@ -3810,13 +4035,13 @@ function renderPortionGame(currentStep, completeStep) {
         <h3>${currentStep.name}</h3>
         <p>${currentStep.instruction}</p>
       </div>
-      <div class="portion-stage">
+      <div class="portion-stage" style="${portionVisual.style}">
         <div id="trayGrid" class="tray-grid">
           ${Array.from(
             { length: currentStep.goal },
             (_, index) => `
-              <button class="tray-slot${isDough ? " tray-slot-dough" : ""}${isBatter ? " tray-slot-batter" : ""}" data-slot="${index}" type="button">
-                <span class="tray-slot-art${isDough ? " dough-art" : ""}${isBatter ? " batter-art" : ""}" aria-hidden="true"></span>
+              <button class="tray-slot tray-slot-${portionVisual.ingredientClass}" data-slot="${index}" type="button">
+                <span class="tray-slot-art ${portionVisual.ingredientClass}-art" aria-hidden="true"></span>
                 <span class="tray-slot-label">${currentStep.fillLabel}</span>
               </button>`,
           ).join("")}
@@ -3855,7 +4080,41 @@ function renderPortionGame(currentStep, completeStep) {
   state.cleanups.push(() => trayGrid.removeEventListener("click", handleClick));
 }
 
+function getSeasonVisualProfile(currentStep) {
+  const source = `${currentStep.name} ${currentStep.label}`.toLowerCase();
+  const seasoningPatterns = [
+    { key: "herb", pattern: /herb|parsley|basil|oregano|mint/ },
+    { key: "salt", pattern: /salt|sea salt/ },
+    { key: "sugar", pattern: /sugar|cinnamon|sweet/ },
+    { key: "pepper", pattern: /pepper|spice|taco|masala|curry|paprika/ },
+    { key: "cheese", pattern: /cheese|parmesan/ },
+    { key: "cocoa", pattern: /cocoa|chocolate|coffee/ },
+    { key: "citrus", pattern: /lemon|lime|zest/ },
+  ];
+
+  const seasoningClass =
+    seasoningPatterns.find(({ pattern }) => pattern.test(source))?.key ?? "savory";
+
+  let hash = 0;
+  for (const char of source) {
+    hash = (hash * 33 + char.charCodeAt(0)) >>> 0;
+  }
+
+  const hue = (hash % 360 + 360) % 360;
+  const bowl = `hsl(${hue} 76% 92%)`;
+  const bowlDeep = `hsl(${(hue + 12) % 360} 58% 74%)`;
+  const fill = `hsl(${(hue + 6) % 360} 76% 66%)`;
+  const fillDeep = `hsl(${(hue + 6) % 360} 62% 48%)`;
+  const zone = `hsl(${(hue + 18) % 360} 68% 58% / 0.88)`;
+
+  return {
+    seasoningClass,
+    style: `--season-bowl:${bowl};--season-bowl-deep:${bowlDeep};--season-fill:${fill};--season-fill-deep:${fillDeep};--season-zone:${zone};`,
+  };
+}
+
 function renderSeasonGame(currentStep, completeStep) {
+  const seasonVisual = getSeasonVisualProfile(currentStep);
   ui.gameArena.innerHTML = `
     <div class="minigame">
       <div class="minigame-head">
@@ -3863,10 +4122,10 @@ function renderSeasonGame(currentStep, completeStep) {
         <h3>${currentStep.name}</h3>
         <p>${currentStep.instruction}</p>
       </div>
-      <div class="season-stage">
+      <div class="season-stage" style="${seasonVisual.style}">
         <div class="season-character">
-          <div class="season-bowl"></div>
-          <div id="sprinkleCloud" class="sprinkle-cloud"></div>
+          <div class="season-bowl season-bowl-${seasonVisual.seasoningClass}"></div>
+          <div id="sprinkleCloud" class="sprinkle-cloud sprinkle-cloud-${seasonVisual.seasoningClass}"></div>
         </div>
         <div class="season-ui">
           <div class="season-meter">
@@ -4397,6 +4656,7 @@ function updateHeader() {
 
   ui.pointsTotal.textContent = `${state.totalPoints} jellys`;
   ui.selectedRecipeName.textContent = selectedRecipe.name;
+  ui.selectedRecipeNameHero.textContent = selectedRecipe.name;
   ui.unlockedCount.textContent = `${unlockedCount} / ${recipes.length}`;
   ui.unlockStatus.textContent = nextRecipe
     ? `${Math.max(0, nextRecipe.requiredPoints - state.totalPoints)} more jellys unlock ${nextRecipe.name}.`

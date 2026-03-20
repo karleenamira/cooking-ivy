@@ -18,6 +18,11 @@
   box-sizing: border-box;
 }
 
+html,
+body {
+  width: 100%;
+}
+
 body {
   margin: 0;
   min-height: 100vh;
@@ -28,6 +33,90 @@ body {
     radial-gradient(circle at top left, rgba(255, 255, 255, 0.76), transparent 26%),
     radial-gradient(circle at bottom right, rgba(246, 163, 196, 0.3), transparent 34%),
     linear-gradient(180deg, var(--bg-top), var(--bg-bottom));
+}
+
+.loading-screen {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  padding: 24px;
+  background:
+    radial-gradient(circle at top left, rgba(255, 255, 255, 0.82), transparent 24%),
+    radial-gradient(circle at bottom right, rgba(246, 163, 196, 0.34), transparent 28%),
+    linear-gradient(180deg, rgba(255, 243, 247, 0.98), rgba(247, 191, 209, 0.98));
+  transition: opacity 280ms ease, visibility 280ms ease;
+}
+
+.loading-screen.hidden {
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+}
+
+.loading-card {
+  width: min(420px, 100%);
+  display: grid;
+  justify-items: center;
+  gap: 14px;
+  padding: 30px 24px;
+  margin-top: 56px;
+  text-align: center;
+  border-radius: 32px;
+  background: rgba(255, 252, 247, 0.9);
+  border: 1px solid rgba(255, 255, 255, 0.72);
+  box-shadow: 0 24px 60px rgba(145, 84, 116, 0.2);
+}
+
+.loading-ivy {
+  position: relative;
+  width: 118px;
+  height: 118px;
+  animation: loading-bob 1.4s ease-in-out infinite;
+}
+
+.loading-ivy .mascot-face {
+  inset: 26px 16px 12px;
+}
+
+.loading-ivy .mascot-ear {
+  top: -2px;
+  width: 30px;
+  height: 56px;
+}
+
+.loading-ivy .mascot-ear-left {
+  left: 18px;
+}
+
+.loading-ivy .mascot-ear-right {
+  right: 18px;
+}
+
+.loading-ivy .mascot-bow {
+  right: 14px;
+}
+
+.loading-copy {
+  margin: 0;
+  line-height: 1.6;
+}
+
+.loading-start-button {
+  min-width: 180px;
+}
+
+@keyframes loading-bob {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+
+  50% {
+    transform: translateY(-6px);
+  }
 }
 
 button {
@@ -52,8 +141,8 @@ a,
 }
 
 .page-shell {
-  width: min(1240px, calc(100vw - 28px));
-  margin: 0 auto;
+  width: min(1240px, calc(100% - 28px));
+  margin-inline: auto;
   padding: 24px 0 36px;
 }
 
@@ -78,6 +167,13 @@ a,
 .hero-card,
 .panel {
   padding: 26px;
+}
+
+.hero > *,
+.game-layout > *,
+.gift-card > *,
+.library-head > * {
+  min-width: 0;
 }
 
 .eyebrow,
@@ -132,6 +228,19 @@ h4 {
 
 .hero-actions {
   margin-top: 22px;
+  display: grid;
+  gap: 10px;
+  justify-items: start;
+}
+
+.hero-selected-copy {
+  margin: 0;
+  font-weight: 700;
+  color: var(--muted);
+}
+
+.hero-selected-copy span {
+  color: var(--ink);
 }
 
 .primary-button,
@@ -827,6 +936,13 @@ h4 {
   min-height: 760px;
 }
 
+.arena-actions {
+  display: grid;
+  gap: 10px;
+  justify-items: start;
+  margin-bottom: 18px;
+}
+
 .game-arena {
   position: relative;
   min-height: 100%;
@@ -1206,6 +1322,11 @@ h4 {
 
 .season-stage {
   grid-template-columns: minmax(240px, 1fr) 240px;
+  --season-bowl: #ffe4ef;
+  --season-bowl-deep: #f7bfd1;
+  --season-fill: #ffd8e8;
+  --season-fill-deep: #f06d93;
+  --season-zone: rgba(240, 109, 147, 0.88);
 }
 
 .season-character {
@@ -1223,7 +1344,7 @@ h4 {
   inset: auto 18% 18% 18%;
   height: 112px;
   border-radius: 0 0 180px 180px;
-  background: linear-gradient(180deg, #ffe4ef, #f7bfd1);
+  background: linear-gradient(180deg, var(--season-bowl), var(--season-bowl-deep));
   box-shadow: inset 0 -14px 0 rgba(255, 255, 255, 0.28);
 }
 
@@ -1239,6 +1360,153 @@ h4 {
   opacity: 0.36;
   transform: scale(0.9);
   transition: opacity 150ms ease, transform 150ms ease;
+}
+
+.season-bowl-herb::before,
+.season-bowl-salt::before,
+.season-bowl-sugar::before,
+.season-bowl-pepper::before,
+.season-bowl-cheese::before,
+.season-bowl-cocoa::before,
+.season-bowl-citrus::before,
+.season-bowl-savory::before {
+  content: "";
+  position: absolute;
+  left: 16%;
+  right: 16%;
+  top: 18px;
+  height: 18px;
+  border-radius: 999px;
+}
+
+.season-bowl-herb::before {
+  background:
+    radial-gradient(circle at 18% 45%, rgba(100, 156, 93, 0.9) 0 11%, transparent 12%),
+    radial-gradient(circle at 36% 32%, rgba(120, 177, 99, 0.92) 0 10%, transparent 11%),
+    radial-gradient(circle at 58% 52%, rgba(85, 144, 78, 0.9) 0 10%, transparent 11%),
+    radial-gradient(circle at 78% 34%, rgba(138, 196, 104, 0.86) 0 11%, transparent 12%),
+    rgba(237, 248, 227, 0.9);
+}
+
+.season-bowl-salt::before {
+  background:
+    radial-gradient(circle at 22% 42%, rgba(255, 255, 255, 0.95) 0 9%, transparent 10%),
+    radial-gradient(circle at 44% 36%, rgba(250, 250, 255, 0.92) 0 8%, transparent 9%),
+    radial-gradient(circle at 62% 50%, rgba(236, 243, 255, 0.96) 0 9%, transparent 10%),
+    radial-gradient(circle at 78% 34%, rgba(255, 255, 255, 0.94) 0 8%, transparent 9%),
+    rgba(238, 245, 255, 0.92);
+}
+
+.season-bowl-sugar::before {
+  background:
+    radial-gradient(circle at 25% 42%, rgba(255, 255, 255, 0.95) 0 8%, transparent 9%),
+    radial-gradient(circle at 48% 34%, rgba(255, 230, 243, 0.94) 0 9%, transparent 10%),
+    radial-gradient(circle at 68% 50%, rgba(255, 245, 221, 0.94) 0 8%, transparent 9%),
+    rgba(255, 244, 248, 0.92);
+}
+
+.season-bowl-pepper::before {
+  background:
+    radial-gradient(circle at 20% 45%, rgba(173, 71, 50, 0.92) 0 10%, transparent 11%),
+    radial-gradient(circle at 42% 34%, rgba(216, 140, 53, 0.92) 0 9%, transparent 10%),
+    radial-gradient(circle at 66% 52%, rgba(133, 58, 48, 0.9) 0 9%, transparent 10%),
+    rgba(251, 225, 197, 0.9);
+}
+
+.season-bowl-cheese::before {
+  background:
+    radial-gradient(circle at 24% 40%, rgba(255, 224, 112, 0.94) 0 9%, transparent 10%),
+    radial-gradient(circle at 44% 34%, rgba(255, 241, 168, 0.96) 0 10%, transparent 11%),
+    radial-gradient(circle at 66% 46%, rgba(245, 195, 78, 0.9) 0 9%, transparent 10%),
+    rgba(255, 243, 188, 0.9);
+}
+
+.season-bowl-cocoa::before {
+  background:
+    radial-gradient(circle at 24% 40%, rgba(123, 80, 61, 0.94) 0 9%, transparent 10%),
+    radial-gradient(circle at 50% 34%, rgba(89, 53, 39, 0.94) 0 9%, transparent 10%),
+    radial-gradient(circle at 72% 52%, rgba(151, 95, 72, 0.92) 0 8%, transparent 9%),
+    rgba(230, 211, 198, 0.9);
+}
+
+.season-bowl-citrus::before {
+  background:
+    radial-gradient(circle at 24% 42%, rgba(249, 222, 80, 0.94) 0 10%, transparent 11%),
+    radial-gradient(circle at 47% 34%, rgba(197, 235, 106, 0.94) 0 9%, transparent 10%),
+    radial-gradient(circle at 72% 48%, rgba(255, 240, 153, 0.94) 0 9%, transparent 10%),
+    rgba(244, 251, 210, 0.9);
+}
+
+.season-bowl-savory::before {
+  background:
+    radial-gradient(circle at 24% 40%, rgba(188, 136, 89, 0.92) 0 9%, transparent 10%),
+    radial-gradient(circle at 48% 34%, rgba(118, 156, 91, 0.92) 0 9%, transparent 10%),
+    radial-gradient(circle at 68% 50%, rgba(213, 182, 109, 0.92) 0 9%, transparent 10%),
+    rgba(242, 230, 205, 0.9);
+}
+
+.sprinkle-cloud-herb {
+  background:
+    radial-gradient(circle at 24% 44%, rgba(162, 226, 154, 0.9), transparent 10%),
+    radial-gradient(circle at 52% 34%, rgba(113, 191, 114, 0.94), transparent 10%),
+    radial-gradient(circle at 66% 58%, rgba(84, 156, 95, 0.9), transparent 10%),
+    radial-gradient(circle at 42% 64%, rgba(210, 246, 193, 0.82), transparent 10%);
+}
+
+.sprinkle-cloud-salt {
+  background:
+    radial-gradient(circle at 24% 44%, rgba(255, 255, 255, 0.94), transparent 10%),
+    radial-gradient(circle at 52% 34%, rgba(232, 241, 255, 0.9), transparent 10%),
+    radial-gradient(circle at 66% 58%, rgba(248, 251, 255, 0.92), transparent 10%),
+    radial-gradient(circle at 42% 64%, rgba(221, 229, 246, 0.8), transparent 10%);
+}
+
+.sprinkle-cloud-sugar {
+  background:
+    radial-gradient(circle at 24% 44%, rgba(255, 255, 255, 0.9), transparent 10%),
+    radial-gradient(circle at 52% 34%, rgba(255, 212, 236, 0.92), transparent 10%),
+    radial-gradient(circle at 66% 58%, rgba(255, 240, 185, 0.86), transparent 10%),
+    radial-gradient(circle at 42% 64%, rgba(255, 236, 244, 0.82), transparent 10%);
+}
+
+.sprinkle-cloud-pepper {
+  background:
+    radial-gradient(circle at 24% 44%, rgba(217, 120, 84, 0.92), transparent 10%),
+    radial-gradient(circle at 52% 34%, rgba(189, 77, 54, 0.9), transparent 10%),
+    radial-gradient(circle at 66% 58%, rgba(229, 169, 80, 0.9), transparent 10%),
+    radial-gradient(circle at 42% 64%, rgba(255, 215, 181, 0.78), transparent 10%);
+}
+
+.sprinkle-cloud-cheese {
+  background:
+    radial-gradient(circle at 24% 44%, rgba(255, 227, 120, 0.92), transparent 10%),
+    radial-gradient(circle at 52% 34%, rgba(255, 241, 175, 0.9), transparent 10%),
+    radial-gradient(circle at 66% 58%, rgba(247, 193, 72, 0.9), transparent 10%),
+    radial-gradient(circle at 42% 64%, rgba(255, 244, 202, 0.82), transparent 10%);
+}
+
+.sprinkle-cloud-cocoa {
+  background:
+    radial-gradient(circle at 24% 44%, rgba(123, 83, 64, 0.92), transparent 10%),
+    radial-gradient(circle at 52% 34%, rgba(97, 60, 45, 0.9), transparent 10%),
+    radial-gradient(circle at 66% 58%, rgba(163, 113, 88, 0.88), transparent 10%),
+    radial-gradient(circle at 42% 64%, rgba(226, 210, 194, 0.74), transparent 10%);
+}
+
+.sprinkle-cloud-citrus {
+  background:
+    radial-gradient(circle at 24% 44%, rgba(248, 235, 123, 0.92), transparent 10%),
+    radial-gradient(circle at 52% 34%, rgba(200, 232, 111, 0.9), transparent 10%),
+    radial-gradient(circle at 66% 58%, rgba(255, 243, 173, 0.92), transparent 10%),
+    radial-gradient(circle at 42% 64%, rgba(240, 255, 218, 0.8), transparent 10%);
+}
+
+.sprinkle-cloud-savory {
+  background:
+    radial-gradient(circle at 24% 44%, rgba(201, 164, 111, 0.92), transparent 10%),
+    radial-gradient(circle at 52% 34%, rgba(126, 163, 101, 0.88), transparent 10%),
+    radial-gradient(circle at 66% 58%, rgba(232, 196, 128, 0.9), transparent 10%),
+    radial-gradient(circle at 42% 64%, rgba(241, 226, 193, 0.78), transparent 10%);
 }
 
 .sprinkle-cloud.active {
@@ -1268,7 +1536,7 @@ h4 {
   right: 6px;
   bottom: 94px;
   height: 48px;
-  border: 3px dashed rgba(240, 109, 147, 0.88);
+  border: 3px dashed var(--season-zone);
   border-radius: 18px;
 }
 
@@ -1278,7 +1546,7 @@ h4 {
   right: 0;
   bottom: 0;
   height: 0;
-  background: linear-gradient(180deg, #ffd8e8, #f06d93);
+  background: linear-gradient(180deg, var(--season-fill), var(--season-fill-deep));
   transition: height 90ms linear;
 }
 
@@ -1558,6 +1826,10 @@ h4 {
 
 .portion-stage {
   padding: 24px;
+  --portion-card: rgba(255, 247, 234, 0.94);
+  --portion-accent: #f3bad0;
+  --portion-accent-deep: #d57a9e;
+  --portion-shadow: rgba(46, 29, 20, 0.12);
 }
 
 .tray-grid {
@@ -1569,8 +1841,12 @@ h4 {
 .tray-slot {
   min-height: 120px;
   border-radius: 24px;
-  background: rgba(255, 247, 234, 0.94);
-  box-shadow: inset 0 0 0 1px rgba(46, 29, 20, 0.06);
+  background:
+    radial-gradient(circle at top, rgba(255, 255, 255, 0.85), transparent 45%),
+    var(--portion-card);
+  box-shadow:
+    inset 0 0 0 1px rgba(46, 29, 20, 0.06),
+    0 14px 24px var(--portion-shadow);
   display: grid;
   place-items: center;
   gap: 8px;
@@ -1584,10 +1860,14 @@ h4 {
 }
 
 .tray-slot-art {
-  width: 44px;
-  height: 44px;
+  position: relative;
+  width: 52px;
+  height: 52px;
   border-radius: 50%;
-  background: radial-gradient(circle at 35% 35%, rgba(255, 255, 255, 0.9), rgba(255, 255, 255, 0.2) 35%, rgba(240, 109, 147, 0.28) 36%, rgba(240, 109, 147, 0.2));
+  background:
+    radial-gradient(circle at 35% 30%, rgba(255, 255, 255, 0.92), rgba(255, 255, 255, 0.2) 36%, transparent 37%),
+    radial-gradient(circle at 50% 58%, var(--portion-accent), color-mix(in srgb, var(--portion-accent-deep) 65%, #ffffff));
+  box-shadow: inset 0 -8px 12px rgba(0, 0, 0, 0.08);
 }
 
 .tray-slot-label {
@@ -1663,8 +1943,139 @@ h4 {
   background: rgba(201, 139, 86, 0.22);
 }
 
+.tray-slot-rice .rice-art {
+  width: 56px;
+  height: 42px;
+  border-radius: 50% 50% 46% 46%;
+  background:
+    radial-gradient(circle at 18% 44%, #fff9ef 0 10%, transparent 11%),
+    radial-gradient(circle at 35% 30%, #fffaf2 0 10%, transparent 11%),
+    radial-gradient(circle at 53% 47%, #fff6eb 0 10%, transparent 11%),
+    radial-gradient(circle at 72% 34%, #fff9f0 0 10%, transparent 11%),
+    radial-gradient(circle at 42% 72%, #fff4e5 0 11%, transparent 12%),
+    linear-gradient(180deg, #fff7ea, #f0e0bf);
+}
+
+.tray-slot-noodles .noodles-art {
+  width: 58px;
+  height: 44px;
+  border-radius: 46%;
+  background: transparent;
+  box-shadow: none;
+}
+
+.tray-slot-noodles .noodles-art::before,
+.tray-slot-noodles .noodles-art::after {
+  content: "";
+  position: absolute;
+  inset: 8px 6px;
+  border-radius: 50%;
+  border-top: 4px solid #f0ce7b;
+  border-bottom: 4px solid #d8aa48;
+}
+
+.tray-slot-noodles .noodles-art::after {
+  inset: 14px 2px 6px;
+  transform: rotate(-12deg);
+}
+
+.tray-slot-cheese .cheese-art {
+  width: 56px;
+  height: 42px;
+  clip-path: polygon(8% 12%, 92% 4%, 82% 92%, 6% 82%);
+  border-radius: 10px;
+  background:
+    radial-gradient(circle at 25% 34%, rgba(214, 149, 35, 0.3) 0 10%, transparent 11%),
+    radial-gradient(circle at 64% 56%, rgba(214, 149, 35, 0.26) 0 11%, transparent 12%),
+    linear-gradient(180deg, #ffe48b, #f3bf42);
+}
+
+.tray-slot-fruit .fruit-art {
+  width: 54px;
+  height: 54px;
+  background:
+    radial-gradient(circle at 35% 64%, #ffd17f 0 22%, transparent 23%),
+    radial-gradient(circle at 62% 36%, #ff7d7d 0 20%, transparent 21%),
+    radial-gradient(circle at 65% 68%, #ffb15e 0 18%, transparent 19%),
+    radial-gradient(circle at 50% 50%, #fff3dd, #ffd5a7);
+}
+
+.tray-slot-chocolate .chocolate-art {
+  width: 50px;
+  height: 50px;
+  border-radius: 16px;
+  background:
+    linear-gradient(90deg, transparent 0 31%, rgba(255, 255, 255, 0.18) 31% 35%, transparent 35% 65%, rgba(255, 255, 255, 0.18) 65% 69%, transparent 69%),
+    linear-gradient(180deg, transparent 0 31%, rgba(255, 255, 255, 0.12) 31% 35%, transparent 35% 65%, rgba(255, 255, 255, 0.12) 65% 69%, transparent 69%),
+    linear-gradient(180deg, #7d4a36, #5a2f21);
+}
+
+.tray-slot-protein .protein-art {
+  width: 56px;
+  height: 40px;
+  border-radius: 999px;
+  background:
+    radial-gradient(circle at 25% 35%, rgba(255, 214, 167, 0.36), transparent 30%),
+    linear-gradient(180deg, #c78254, #8f4d2e);
+}
+
+.tray-slot-protein .protein-art::before,
+.tray-slot-protein .protein-art::after {
+  content: "";
+  position: absolute;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: linear-gradient(180deg, #b76e46, #8d4b2b);
+  top: 20px;
+}
+
+.tray-slot-protein .protein-art::before {
+  left: 6px;
+}
+
+.tray-slot-protein .protein-art::after {
+  right: 6px;
+}
+
+.tray-slot-sauce .sauce-art {
+  width: 58px;
+  height: 44px;
+  border-radius: 48% 52% 44% 56% / 56% 52% 48% 44%;
+  background:
+    radial-gradient(circle at 32% 24%, rgba(255, 219, 182, 0.34), transparent 26%),
+    linear-gradient(180deg, #d86c4b, #a73e30);
+}
+
+.tray-slot-leaf .leaf-art {
+  width: 54px;
+  height: 54px;
+  border-radius: 18px;
+  background:
+    linear-gradient(135deg, rgba(255, 255, 255, 0.28), transparent 40%),
+    linear-gradient(180deg, #52785f, #284739);
+}
+
+.tray-slot-leaf .leaf-art::before {
+  content: "";
+  position: absolute;
+  inset: 10px 24px 10px 24px;
+  border-radius: 999px;
+  background: rgba(215, 240, 210, 0.6);
+}
+
+.tray-slot-filling .filling-art {
+  width: 54px;
+  height: 54px;
+  border-radius: 20px;
+  background:
+    radial-gradient(circle at 34% 32%, rgba(255, 255, 255, 0.42), transparent 18%),
+    radial-gradient(circle at 65% 60%, rgba(255, 239, 196, 0.62), transparent 24%),
+    linear-gradient(180deg, color-mix(in srgb, var(--portion-accent) 68%, #ffe9c9), color-mix(in srgb, var(--portion-accent-deep) 55%, #ffbf8f));
+}
+
 .tray-slot.filled {
-  background: linear-gradient(180deg, #d1a26e, #b97a44);
+  background: linear-gradient(180deg, var(--portion-accent), var(--portion-accent-deep));
   color: #fff;
 }
 
@@ -1846,8 +2257,16 @@ h4 {
 }
 
 @media (max-width: 760px) {
+  .loading-screen {
+    align-items: center;
+  }
+
+  .loading-card {
+    margin-top: 0;
+  }
+
   .page-shell {
-    width: min(100%, calc(100vw - 16px));
+    width: calc(100% - 16px);
     margin-inline: auto;
     padding-top: 12px;
   }

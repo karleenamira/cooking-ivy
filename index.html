@@ -13,6 +13,29 @@
     <link rel="stylesheet" href="./styles.css" />
   </head>
   <body>
+    <div id="loadingScreen" class="loading-screen" aria-live="polite">
+      <div class="loading-card">
+        <div class="loading-ivy">
+          <div class="mascot-ear mascot-ear-left"></div>
+          <div class="mascot-ear mascot-ear-right"></div>
+          <div class="mascot-bow"></div>
+          <div class="mascot-face">
+            <span class="mascot-eye mascot-eye-left"></span>
+            <span class="mascot-eye mascot-eye-right"></span>
+            <span class="mascot-nose"></span>
+            <span class="mascot-mouth"></span>
+            <span class="mascot-blush mascot-blush-left"></span>
+            <span class="mascot-blush mascot-blush-right"></span>
+          </div>
+        </div>
+        <p class="card-label">Loading Kitchen</p>
+        <h2>Cooking Ivy</h2>
+        <p class="loading-copy">welcome! ivy's setting up the kitchen for you!</p>
+        <button id="startScreenButton" class="primary-button loading-start-button" type="button">
+          Tap To Play
+        </button>
+      </div>
+    </div>
     <div class="page-shell">
       <header class="hero">
         <div class="hero-copy">
@@ -23,9 +46,6 @@
             did you know that you can get a mystery gift if you get 100
             thousand jelly ;) i will update the game monthly! have fun chefs!!
           </p>
-          <div class="hero-actions">
-            <button id="playButton" class="primary-button">Cook Selected Recipe</button>
-          </div>
         </div>
 
         <div class="hero-card">
@@ -146,6 +166,13 @@
         </aside>
 
         <section class="panel arena-panel">
+          <div class="arena-actions">
+            <button id="playButton" class="primary-button">Cook Selected Recipe</button>
+            <p class="hero-selected-copy">
+              Selected food:
+              <span id="selectedRecipeNameHero">Garlic Veggie Stir-Fry</span>
+            </p>
+          </div>
           <div id="gameArena" class="game-arena">
             <div class="stage-copy">
               <p class="arena-label">Kitchen Station</p>
