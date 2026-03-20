@@ -363,34 +363,157 @@ function slugifyRecipeName(name) {
   return name.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "");
 }
 
-function getGeneratedRecipeSummary(template, main, accent, sauce, garnish) {
-  const summaryByTemplate = {
-    toast: `Crisp toast topped with ${main.toLowerCase()}, ${accent.toLowerCase()}, and a ${sauce.toLowerCase()} finish.`,
-    salad: `Fresh cups layered with ${main.toLowerCase()}, ${accent.toLowerCase()}, and a bright ${sauce.toLowerCase()} drizzle.`,
-    skillet: `A warm skillet dish with ${main.toLowerCase()}, ${accent.toLowerCase()}, and a savory ${garnish.toLowerCase()} finish.`,
-    bowl: `A cozy bowl built from ${main.toLowerCase()}, ${accent.toLowerCase()}, and a sweet ${sauce.toLowerCase()} topping.`,
-    dip: `Creamy ${main.toLowerCase()} dip with ${accent.toLowerCase()} and a soft ${garnish.toLowerCase()} finish.`,
-    wrap: `Soft wraps filled with ${main.toLowerCase()}, ${accent.toLowerCase()}, and a quick ${sauce.toLowerCase()} layer.`,
-    pancake: `Fluffy stack built around ${main.toLowerCase()} with ${accent.toLowerCase()} and ${sauce.toLowerCase()}.`,
-    pasta: `${main} pasta finished with ${sauce.toLowerCase()} and a touch of ${garnish.toLowerCase()}.`,
-    soup: `${main} soup with ${accent.toLowerCase()} and a comforting ${sauce.toLowerCase()} base.`,
-    rice: `${main} rice bowls served with ${sauce.toLowerCase()} and a final ${garnish.toLowerCase()} finish.`,
-    traybake: `${main} roasted with ${accent.toLowerCase()} and a glossy ${sauce.toLowerCase()} coating.`,
-    tacos: `${main} tacos tucked into ${accent.toLowerCase()} with ${sauce.toLowerCase()} and ${garnish.toLowerCase()}.`,
-    noodle: `${main} noodles coated in ${sauce.toLowerCase()} with ${accent.toLowerCase()} and ${garnish.toLowerCase()}.`,
-    bake: `${main} bake layered with ${accent.toLowerCase()}, ${sauce.toLowerCase()}, and ${garnish.toLowerCase()}.`,
-    pastry: `A bakery-style ${main.toLowerCase()} pastry with ${accent.toLowerCase()} and ${sauce.toLowerCase()}.`,
-    curry: `${main} curry served over ${accent.toLowerCase()} with rich ${sauce.toLowerCase()} notes.`,
-    noodlefeast: `${main} noodle feast tossed with ${sauce.toLowerCase()} and finished with ${garnish.toLowerCase()}.`,
-    layercake: `${main} layer cake stacked with ${accent.toLowerCase()} and a soft ${sauce.toLowerCase()} finish.`,
-    stuffed: `${main} filled with ${accent.toLowerCase()}, baked with ${sauce.toLowerCase()}, and finished with ${garnish.toLowerCase()}.`,
-    feast: `${main} platter served with ${accent.toLowerCase()}, ${sauce.toLowerCase()}, and ${garnish.toLowerCase()}.`,
-    dumpling: `${main} dumplings wrapped around ${accent.toLowerCase()} and served with ${sauce.toLowerCase()}.`,
-  };
-  return summaryByTemplate[template] || `${main} and ${accent} come together with ${sauce.toLowerCase()} and a ${garnish.toLowerCase()} finish.`;
+function hashString(value) {
+  let hash = 0;
+  for (const char of value) {
+    hash = (hash * 31 + char.charCodeAt(0)) >>> 0;
+  }
+  return hash;
 }
 
-function getGeneratedRecipeIngredients(template, difficulty, main, accent, sauce, garnish) {
+function pickVariant(options, seed, offset = 0) {
+  return options[(seed + offset) % options.length];
+}
+
+function getGeneratedStepPalette(seed) {
+  const palettes = [
+    { startColor: "#ffbe7a", endColor: "#ff8a8a" },
+    { startColor: "#9fd89f", endColor: "#7ab6d6" },
+    { startColor: "#ffd4ba", endColor: "#f0ad8c" },
+    { startColor: "#ffc0c8", endColor: "#f2a15d" },
+    { startColor: "#f0d9a8", endColor: "#79c98b" },
+  ];
+  return pickVariant(palettes, seed);
+}
+
+function makePrepStep(title, ingredientLabel, seed, goal = 4, appearance) {
+  const palette = getGeneratedStepPalette(seed);
+  return step.slice(title, {
+    goal,
+    ingredientLabel,
+    appearance,
+    startColor: palette.startColor,
+    endColor: palette.endColor,
+  });
+}
+
+function getGeneratedRecipeSummary(name, template, main, accent, sauce, garnish, seed) {
+  const summaryByTemplate = {
+    toast: [
+      `${name} stacks crisp toast with ${main.toLowerCase()}, ${accent.toLowerCase()}, and a shiny ${sauce.toLowerCase()} finish.`,
+      `Crunchy toast loaded with ${main.toLowerCase()}, soft ${accent.toLowerCase()}, and a quick ${sauce.toLowerCase()} drizzle.`,
+      `${name} is a bright little toast plate with ${main.toLowerCase()}, ${accent.toLowerCase()}, and ${garnish.toLowerCase()} on top.`,
+    ],
+    salad: [
+      `${name} layers fresh ${main.toLowerCase()} with ${accent.toLowerCase()} and a light ${sauce.toLowerCase()} finish.`,
+      `A cup-style salad recipe with chilled ${main.toLowerCase()}, neat ${accent.toLowerCase()}, and ${garnish.toLowerCase()}.`,
+      `${name} keeps things fresh with ${main.toLowerCase()}, ${accent.toLowerCase()}, and a bright ${sauce.toLowerCase()} spoon-over.`,
+    ],
+    skillet: [
+      `${name} is a cozy skillet recipe with ${main.toLowerCase()}, ${accent.toLowerCase()}, and ${garnish.toLowerCase()}.`,
+      `A warm pan dish where ${main.toLowerCase()} and ${accent.toLowerCase()} cook down into a savory finish.`,
+      `${name} brings together skillet-cooked ${main.toLowerCase()}, soft ${accent.toLowerCase()}, and a last touch of ${garnish.toLowerCase()}.`,
+    ],
+    bowl: [
+      `${name} builds a creamy bowl with ${main.toLowerCase()}, ${accent.toLowerCase()}, and ${sauce.toLowerCase()}.`,
+      `A layered bowl recipe featuring ${main.toLowerCase()}, ${accent.toLowerCase()}, and a sweet ${sauce.toLowerCase()} topping.`,
+      `${name} is a spoonable bowl packed with ${main.toLowerCase()}, neat ${accent.toLowerCase()}, and ${garnish.toLowerCase()}.`,
+    ],
+    dip: [
+      `${name} turns ${main.toLowerCase()} into a creamy dip with ${accent.toLowerCase()} and ${garnish.toLowerCase()}.`,
+      `A warm sharing dip with ${main.toLowerCase()}, soft ${accent.toLowerCase()}, and a smooth finish.`,
+      `${name} makes a silky dip with ${main.toLowerCase()}, ${accent.toLowerCase()}, and a light ${sauce.toLowerCase()} note.`,
+    ],
+    wrap: [
+      `${name} tucks ${main.toLowerCase()} and ${accent.toLowerCase()} into soft wraps with ${sauce.toLowerCase()}.`,
+      `A hand-held wrap recipe packed with ${main.toLowerCase()}, ${accent.toLowerCase()}, and ${garnish.toLowerCase()}.`,
+      `${name} rolls up savory ${main.toLowerCase()} with ${accent.toLowerCase()} and a quick ${sauce.toLowerCase()} layer.`,
+    ],
+    pancake: [
+      `${name} stacks fluffy rounds with ${main.toLowerCase()}, ${accent.toLowerCase()}, and ${sauce.toLowerCase()}.`,
+      `A soft breakfast stack topped with ${main.toLowerCase()}, ${accent.toLowerCase()}, and ${garnish.toLowerCase()}.`,
+      `${name} keeps the pancakes tender and finishes them with ${accent.toLowerCase()} and ${sauce.toLowerCase()}.`,
+    ],
+    pasta: [
+      `${name} coats pasta with ${sauce.toLowerCase()}, ${accent.toLowerCase()}, and a finish of ${garnish.toLowerCase()}.`,
+      `A comforting pasta bowl built around ${main.toLowerCase()} with ${sauce.toLowerCase()} and ${accent.toLowerCase()}.`,
+      `${name} is a saucy pasta recipe with ${main.toLowerCase()}, ${accent.toLowerCase()}, and ${garnish.toLowerCase()}.`,
+    ],
+    soup: [
+      `${name} simmers ${main.toLowerCase()} with ${accent.toLowerCase()} in a cozy ${sauce.toLowerCase()} base.`,
+      `A warm soup recipe that balances ${main.toLowerCase()}, ${accent.toLowerCase()}, and ${garnish.toLowerCase()}.`,
+      `${name} makes a comforting pot of ${main.toLowerCase()} soup with a smooth ${sauce.toLowerCase()} finish.`,
+    ],
+    rice: [
+      `${name} serves ${main.toLowerCase()} over ${accent.toLowerCase()} with ${sauce.toLowerCase()} and ${garnish.toLowerCase()}.`,
+      `A rice bowl recipe with saucy ${main.toLowerCase()}, soft ${accent.toLowerCase()}, and a neat topping.`,
+      `${name} pairs ${main.toLowerCase()} with ${accent.toLowerCase()} and a glossy ${sauce.toLowerCase()} spoon-over.`,
+    ],
+    traybake: [
+      `${name} roasts ${main.toLowerCase()} with ${accent.toLowerCase()} and a shiny ${sauce.toLowerCase()} coat.`,
+      `A sheet-pan style bake with ${main.toLowerCase()}, ${accent.toLowerCase()}, and ${garnish.toLowerCase()}.`,
+      `${name} spreads everything across a tray for crisp edges and a ${sauce.toLowerCase()} finish.`,
+    ],
+    tacos: [
+      `${name} fills tacos with ${main.toLowerCase()}, ${accent.toLowerCase()}, and ${sauce.toLowerCase()}.`,
+      `A taco-night recipe built around ${main.toLowerCase()}, ${accent.toLowerCase()}, and ${garnish.toLowerCase()}.`,
+      `${name} keeps the tacos savory with ${main.toLowerCase()}, ${accent.toLowerCase()}, and a fresh finish.`,
+    ],
+    noodle: [
+      `${name} tosses noodles with ${main.toLowerCase()}, ${accent.toLowerCase()}, and ${sauce.toLowerCase()}.`,
+      `A slurpy noodle bowl recipe with ${main.toLowerCase()}, ${accent.toLowerCase()}, and ${garnish.toLowerCase()}.`,
+      `${name} builds glossy noodles with ${sauce.toLowerCase()} and a finishing touch of ${garnish.toLowerCase()}.`,
+    ],
+    bake: [
+      `${name} layers a bubbling bake with ${main.toLowerCase()}, ${accent.toLowerCase()}, and ${sauce.toLowerCase()}.`,
+      `A hearty oven recipe built from ${main.toLowerCase()}, ${accent.toLowerCase()}, and ${garnish.toLowerCase()}.`,
+      `${name} turns ${main.toLowerCase()} into a golden bake with ${sauce.toLowerCase()} and ${accent.toLowerCase()}.`,
+    ],
+    pastry: [
+      `${name} is a bakery-style pastry with ${main.toLowerCase()}, ${accent.toLowerCase()}, and ${sauce.toLowerCase()}.`,
+      `A flaky pastry recipe filled with ${accent.toLowerCase()} and finished with ${garnish.toLowerCase()}.`,
+      `${name} bakes up crisp pastry around ${main.toLowerCase()} with a sweet ${sauce.toLowerCase()} finish.`,
+    ],
+    curry: [
+      `${name} cooks ${main.toLowerCase()} in a rich ${sauce.toLowerCase()} curry over ${accent.toLowerCase()}.`,
+      `A warm curry plate with ${main.toLowerCase()}, ${accent.toLowerCase()}, and ${garnish.toLowerCase()}.`,
+      `${name} builds a bold curry with ${main.toLowerCase()} and a smooth ${sauce.toLowerCase()} base.`,
+    ],
+    noodlefeast: [
+      `${name} piles noodles high with ${main.toLowerCase()}, ${accent.toLowerCase()}, and ${sauce.toLowerCase()}.`,
+      `A bigger noodle dinner with saucy ${main.toLowerCase()}, springy ${accent.toLowerCase()}, and ${garnish.toLowerCase()}.`,
+      `${name} finishes every noodle with ${sauce.toLowerCase()} and a final touch of ${garnish.toLowerCase()}.`,
+    ],
+    layercake: [
+      `${name} stacks soft cake layers with ${accent.toLowerCase()}, ${sauce.toLowerCase()}, and ${garnish.toLowerCase()}.`,
+      `A celebration cake recipe with fluffy layers, smooth ${sauce.toLowerCase()}, and ${accent.toLowerCase()}.`,
+      `${name} is a tall layered bake finished with ${garnish.toLowerCase()} and a soft ${sauce.toLowerCase()} edge.`,
+    ],
+    stuffed: [
+      `${name} fills ${main.toLowerCase()} with ${accent.toLowerCase()}, then bakes it with ${sauce.toLowerCase()}.`,
+      `A stuffed bake where ${main.toLowerCase()} holds a savory ${accent.toLowerCase()} center.`,
+      `${name} turns ${main.toLowerCase()} into a filled oven dish with ${garnish.toLowerCase()} on top.`,
+    ],
+    feast: [
+      `${name} builds a large platter of ${main.toLowerCase()}, ${accent.toLowerCase()}, and ${sauce.toLowerCase()}.`,
+      `A feast-style spread with roasted ${main.toLowerCase()}, ${accent.toLowerCase()}, and ${garnish.toLowerCase()}.`,
+      `${name} serves a full platter with crisp edges, rich ${sauce.toLowerCase()}, and a final garnish.`,
+    ],
+    dumpling: [
+      `${name} wraps ${main.toLowerCase()} and ${accent.toLowerCase()} into dumplings with ${sauce.toLowerCase()}.`,
+      `A dumpling recipe with tidy folds, ${main.toLowerCase()} filling, and ${garnish.toLowerCase()}.`,
+      `${name} keeps the filling savory and serves it with a smooth ${sauce.toLowerCase()} dip.`,
+    ],
+  };
+  const options = summaryByTemplate[template] || [
+    `${name} brings together ${main.toLowerCase()}, ${accent.toLowerCase()}, ${sauce.toLowerCase()}, and ${garnish.toLowerCase()}.`,
+    `A fresh combination of ${main.toLowerCase()}, ${accent.toLowerCase()}, and ${sauce.toLowerCase()} finished with ${garnish.toLowerCase()}.`,
+    `${name} balances ${main.toLowerCase()} with ${accent.toLowerCase()} and a touch of ${garnish.toLowerCase()}.`,
+  ];
+  return pickVariant(options, seed);
+}
+
+function getGeneratedRecipeIngredients(template, difficulty, main, accent, sauce, garnish, seed) {
   const pantryItem = difficulty === "Hard" ? "Butter or oil for cooking" : "Olive oil";
   const baseByTemplate = {
     toast: ["4 toast slices", main, accent, sauce, garnish, pantryItem, "Pinch of salt", "Small sweet finish"],
@@ -415,163 +538,77 @@ function getGeneratedRecipeIngredients(template, difficulty, main, accent, sauce
     feast: [main, accent, sauce, garnish, "Roasting fat", pantryItem, "Salt", "Pepper"],
     dumpling: ["Dumpling wrappers", main, accent, sauce, garnish, pantryItem, "Salt", "Pepper"],
   };
-  return baseByTemplate[template] || [main, accent, sauce, garnish, pantryItem, "Salt", "Pepper", "Finishing touch"];
+  const extrasByDifficulty = {
+    Easy: ["Honey drizzle", "Toasted seeds", "Extra butter", "Cinnamon dust", "Fresh citrus"],
+    Medium: ["Crunchy topping", "Quick pickle", "Roasted garlic", "Chili flakes", "Herb oil"],
+    Hard: ["Compound butter", "Crispy shallots", "Bright herb salad", "Spiced oil", "Toasted crumbs"],
+  };
+  const finishingTouches = ["Pinch of sea salt", "Fresh herbs", "Lemon zest", "Black pepper", "Sweet finish"];
+  const base = [...(baseByTemplate[template] || [main, accent, sauce, garnish, pantryItem, "Salt", "Pepper", "Finishing touch"])];
+  base[base.length - 1] = pickVariant(finishingTouches, seed, 1);
+  base.push(pickVariant(extrasByDifficulty[difficulty], seed, 2));
+  return base;
 }
 
-function getGeneratedRecipeMethod(template, difficulty, main, accent, sauce, garnish) {
-  const methodByTemplate = {
+function getGeneratedRecipeMethod(template, difficulty, main, accent, sauce, garnish, seed) {
+  const methodsByTemplate = {
     toast: [
-      `Prep the ${main.toLowerCase()} and warm the toast base.`,
-      `Layer the ${accent.toLowerCase()} over the toast.`,
-      `Toast until the edges feel crisp and ready.`,
-      `Finish with ${sauce.toLowerCase()} and ${garnish.toLowerCase()} before serving.`,
+      [`Prep the ${main.toLowerCase()} and warm the toast base.`, `Layer the ${accent.toLowerCase()} over the toast.`, `Toast until the edges feel crisp and ready.`, `Finish with ${sauce.toLowerCase()} and ${garnish.toLowerCase()} before serving.`],
+      [`Slice and ready the ${main.toLowerCase()} topping.`, `Toast the bread until golden at the edges.`, `Add the ${accent.toLowerCase()} in even little layers.`, `Spoon over ${sauce.toLowerCase()} and finish with ${garnish.toLowerCase()}.`],
     ],
     salad: [
-      `Prep the ${main.toLowerCase()} and ${accent.toLowerCase()} for layering.`,
-      `Build the cups in tidy fresh layers.`,
-      `Spoon over the ${sauce.toLowerCase()} carefully.`,
-      `Finish with ${garnish.toLowerCase()} and serve right away.`,
-    ],
-    skillet: [
-      `Prep the ${main.toLowerCase()} and warm the skillet.`,
-      `Cook the ${accent.toLowerCase()} until the pan smells savory.`,
-      `Stir everything together until it looks glossy and cooked through.`,
-      `Finish with ${garnish.toLowerCase()} before serving warm.`,
-    ],
-    bowl: [
-      `Build the bowl base with ${main.toLowerCase()}.`,
-      `Layer in the ${accent.toLowerCase()} for texture and color.`,
-      `Drizzle over the ${sauce.toLowerCase()} in a smooth layer.`,
-      `Finish with ${garnish.toLowerCase()} and serve immediately.`,
-    ],
-    dip: [
-      `Whisk the ${main.toLowerCase()} base until smooth.`,
-      `Warm in the ${accent.toLowerCase()} gently.`,
-      `Cook until the dip turns creamy and glossy.`,
-      `Finish with ${garnish.toLowerCase()} and serve warm.`,
-    ],
-    wrap: [
-      `Prep the ${main.toLowerCase()} filling and warm the wraps.`,
-      `Layer in the ${accent.toLowerCase()} evenly.`,
-      `Add the ${sauce.toLowerCase()} so each wrap stays flavorful.`,
-      `Roll tight and finish with ${garnish.toLowerCase()}.`,
-    ],
-    pancake: [
-      `Mix the batter and prep the ${main.toLowerCase()} topping.`,
-      `Cook even rounds until lightly golden.`,
-      `Stack with ${accent.toLowerCase()} between the layers.`,
-      `Finish with ${sauce.toLowerCase()} and ${garnish.toLowerCase()}.`,
-    ],
-    pasta: [
-      `Boil the pasta and prep the ${main.toLowerCase()}.`,
-      `Make the ${sauce.toLowerCase()} until it turns smooth.`,
-      `Toss the pasta with ${accent.toLowerCase()} and the sauce.`,
-      `Finish with ${garnish.toLowerCase()} before serving.`,
-    ],
-    soup: [
-      `Prep the ${main.toLowerCase()} and build the soup base.`,
-      `Cook the ${accent.toLowerCase()} until soft and fragrant.`,
-      `Simmer with the ${sauce.toLowerCase()} until the pot tastes balanced.`,
-      `Finish with ${garnish.toLowerCase()} and serve warm.`,
-    ],
-    rice: [
-      `Prep the ${main.toLowerCase()} and warm the rice.`,
-      `Cook the topping until glossy and cooked through.`,
-      `Spoon over the ${sauce.toLowerCase()} while tossing gently.`,
-      `Finish with ${garnish.toLowerCase()} before serving.`,
-    ],
-    traybake: [
-      `Prep the ${main.toLowerCase()} and ${accent.toLowerCase()} for roasting.`,
-      `Season and spread everything across the tray.`,
-      `Roast until the edges caramelize and the center stays tender.`,
-      `Finish with ${garnish.toLowerCase()} before serving.`,
-    ],
-    tacos: [
-      `Cook the ${main.toLowerCase()} filling until flavorful.`,
-      `Warm the ${accent.toLowerCase()} and prep the toppings.`,
-      `Build each taco with the filling and ${sauce.toLowerCase()}.`,
-      `Finish with ${garnish.toLowerCase()} and serve.`,
-    ],
-    noodle: [
-      `Cook the noodles and prep the ${main.toLowerCase()} topping.`,
-      `Whisk the ${sauce.toLowerCase()} until smooth.`,
-      `Toss the noodles with ${accent.toLowerCase()} and the sauce.`,
-      `Finish with ${garnish.toLowerCase()} before serving.`,
-    ],
-    bake: [
-      `Prep the ${main.toLowerCase()} base and the baking dish.`,
-      `Layer in the ${accent.toLowerCase()} and ${sauce.toLowerCase()}.`,
-      `Bake until the top turns golden and bubbling.`,
-      `Finish with ${garnish.toLowerCase()} before serving.`,
-    ],
-    pastry: [
-      `Prepare the pastry base and arrange the ${main.toLowerCase()}.`,
-      `Fill with ${accent.toLowerCase()} for a bakery-style center.`,
-      `Bake until flaky and deeply golden.`,
-      `Finish with ${sauce.toLowerCase()} and ${garnish.toLowerCase()}.`,
-    ],
-    curry: [
-      `Cook the ${main.toLowerCase()} with spices until fragrant.`,
-      `Build the ${sauce.toLowerCase()} until rich and smooth.`,
-      `Serve over the ${accent.toLowerCase()} while still hot.`,
-      `Finish with ${garnish.toLowerCase()} before serving.`,
-    ],
-    noodlefeast: [
-      `Cook the noodles and prep the ${main.toLowerCase()} topping.`,
-      `Whisk the ${sauce.toLowerCase()} until silky.`,
-      `Toss the noodles with ${accent.toLowerCase()} and the sauce.`,
-      `Finish with ${garnish.toLowerCase()} and plate generously.`,
-    ],
-    layercake: [
-      `Mix and bake the cake layers until springy.`,
-      `Whisk the ${accent.toLowerCase()} filling or frosting smooth.`,
-      `Stack the layers with ${sauce.toLowerCase()} between them.`,
-      `Finish with ${garnish.toLowerCase()} and present the cake.`,
-    ],
-    stuffed: [
-      `Prep the ${main.toLowerCase()} shells and mix the filling.`,
-      `Fill with ${accent.toLowerCase()} and tuck everything neatly in place.`,
-      `Bake with ${sauce.toLowerCase()} until tender.`,
-      `Finish with ${garnish.toLowerCase()} before serving.`,
-    ],
-    feast: [
-      `Prep the ${main.toLowerCase()} centerpiece and the ${accent.toLowerCase()} sides.`,
-      `Roast until everything turns golden and tender.`,
-      `Whisk the ${sauce.toLowerCase()} for the platter.`,
-      `Finish with ${garnish.toLowerCase()} and carve for serving.`,
-    ],
-    dumpling: [
-      `Mix the ${main.toLowerCase()} filling until cohesive.`,
-      `Fill the wrappers with ${accent.toLowerCase()} and seal well.`,
-      `Cook until tender with a crisp finish where needed.`,
-      `Serve with ${sauce.toLowerCase()} and ${garnish.toLowerCase()}.`,
+      [`Prep the ${main.toLowerCase()} and ${accent.toLowerCase()} for layering.`, `Build the cups in tidy fresh layers.`, `Spoon over the ${sauce.toLowerCase()} carefully.`, `Finish with ${garnish.toLowerCase()} and serve right away.`],
+      [`Chill the serving cups and prep the ${main.toLowerCase()}.`, `Layer in the ${accent.toLowerCase()} so the colors stay neat.`, `Drizzle the ${sauce.toLowerCase()} across the top.`, `Add ${garnish.toLowerCase()} and serve while fresh.`],
     ],
   };
-  return methodByTemplate[template] || [
-    `Prep the ${main.toLowerCase()} and ${accent.toLowerCase()}.`,
-    `Build the dish with ${sauce.toLowerCase()} in stages.`,
+  const genericMethods = [
+    `Prep the ${main.toLowerCase()} and ${accent.toLowerCase()} for the recipe base.`,
+    `Build the dish in stages with ${sauce.toLowerCase()} added at the right moment.`,
     `Cook carefully until the texture feels right for a ${difficulty.toLowerCase()} recipe.`,
     `Finish with ${garnish.toLowerCase()} before serving.`,
   ];
+  const options = methodsByTemplate[template] || [genericMethods, [...genericMethods].reverse()];
+  return pickVariant(options, seed);
 }
 
-function getGeneratedRecipeSteps(template, difficulty, main, accent, sauce, garnish) {
+function remixGeneratedSteps(steps, seed) {
+  const remixed = steps.map((currentStep, index) => {
+    const renamed = {
+      ...currentStep,
+      name: `${pickVariant(["Carefully", "Quickly", "Neatly", "Gently"], seed, index)} ${currentStep.name}`,
+    };
+    if (typeof renamed.goal === "number" && renamed.goal >= 4 && renamed.goal <= 10) {
+      renamed.goal = Math.max(4, Math.min(12, renamed.goal + ((seed + index) % 2)));
+    }
+    return renamed;
+  });
+
+  if (remixed.length > 3 && seed % 2 === 1) {
+    [remixed[1], remixed[2]] = [remixed[2], remixed[1]];
+  }
+  if (remixed.length > 5 && seed % 3 === 0) {
+    [remixed[remixed.length - 2], remixed[remixed.length - 1]] = [remixed[remixed.length - 1], remixed[remixed.length - 2]];
+  }
+  return remixed;
+}
+
+function getGeneratedRecipeSteps(template, difficulty, main, accent, sauce, garnish, seed) {
   if (difficulty === "Easy") {
     const easyStepsByTemplate = {
       toast: [
         step.portion(`Layer the ${accent}`, accent, 6, `Portion the ${accent.toLowerCase()} evenly onto each toast.`),
         step.season(`Brush with ${sauce}`, sauce, 4, `Add a light ${sauce.toLowerCase()} finish in the heart zone.`),
-        step.slice(`Prep the ${main}`, { goal: 4, ingredientLabel: `${main} Prep`, startColor: "#ffc0c8", endColor: "#f2a15d" }),
+        makePrepStep(`Prep the ${main}`, `${main} Prep`, seed),
         step.heat(`Toast the ${main} Bites`, 96, "Keep the heat steady for golden edges."),
       ],
       salad: [
-        step.slice(`Prep the ${main}`, { goal: 4, ingredientLabel: `${main} Prep`, startColor: "#9fd89f", endColor: "#ffcb8e" }),
+        makePrepStep(`Prep the ${main}`, `${main} Prep`, seed + 1),
         step.portion(`Layer the ${accent}`, accent, 6, `Portion the ${accent.toLowerCase()} neatly into the cups.`),
         step.mix(`Toss the ${main} Base`, "vanilla", 80, "Mix gently so the layers stay fresh and tidy."),
         step.season(`Finish with ${sauce}`, sauce, 4, `Add the ${sauce.toLowerCase()} right into the sweet spot.`),
       ],
       skillet: [
-        step.slice(`Prep the ${main}`, { goal: 4, ingredientLabel: `${main} Prep`, startColor: "#f0d9a8", endColor: "#ff8a8a" }),
+        makePrepStep(`Prep the ${main}`, `${main} Prep`, seed + 2),
         step.heat(`Warm the ${accent} Skillet`, 92, "Keep the skillet warm and gentle."),
         step.mix(`Stir the ${main}`, "carbonara", 80, "Stir until everything looks smooth and cozy."),
         step.season(`Finish with ${garnish}`, garnish, 4, `Add a little ${garnish.toLowerCase()} finish in the heart zone.`),
@@ -589,7 +626,7 @@ function getGeneratedRecipeSteps(template, difficulty, main, accent, sauce, garn
         step.mix(`Finish the ${main} Dip`, "carbonara", 84, "Stir until the dip turns glossy."),
       ],
       wrap: [
-        step.slice(`Prep the ${main}`, { goal: 4, ingredientLabel: `${main} Prep`, startColor: "#9fd89f", endColor: "#ffbe7a" }),
+        makePrepStep(`Prep the ${main}`, `${main} Prep`, seed + 3),
         step.portion(`Fill the Wraps`, accent, 6, `Portion the ${accent.toLowerCase()} evenly into each wrap.`),
         step.season(`Add the ${sauce}`, sauce, 4, `Add the ${sauce.toLowerCase()} right into the center zone.`),
         step.knead(`Roll the Wraps`, 8, "Roll the wraps into neat bundles."),
@@ -601,21 +638,21 @@ function getGeneratedRecipeSteps(template, difficulty, main, accent, sauce, garn
         step.season(`Finish with ${sauce}`, sauce, 4, `Add the ${sauce.toLowerCase()} finish right into the heart zone.`),
       ],
     };
-    return easyStepsByTemplate[template];
+    return remixGeneratedSteps(easyStepsByTemplate[template], seed);
   }
 
   if (difficulty === "Medium") {
     const mediumStepsByTemplate = {
       pasta: [
         step.heat(`Boil the ${accent}`, 96, "Cook until tender and springy."),
-        step.slice(`Prep the ${main}`, { goal: 4, ingredientLabel: `${main} Prep`, startColor: "#9fd89f", endColor: "#ff8a8a" }),
+        makePrepStep(`Prep the ${main}`, `${main} Prep`, seed),
         step.mix(`Whisk the ${sauce}`, "carbonara", 88, "Whisk until the sauce turns smooth."),
         step.season(`Add the ${garnish}`, garnish, 5, `Season the pasta with ${garnish.toLowerCase()} in the heart zone.`),
         step.mix(`Toss the ${accent}`, "carbonara", 90, "Coat every bite evenly in sauce."),
         step.plate(`Serve the ${accent}`, accent, 6, "Plate the pasta in neat warm bowls."),
       ],
       soup: [
-        step.slice(`Prep the ${main}`, { goal: 4, ingredientLabel: `${main} Prep`, startColor: "#ffbe7a", endColor: "#f6b1c3" }),
+        makePrepStep(`Prep the ${main}`, `${main} Prep`, seed + 1),
         step.heat(`Soften the ${main}`, 94, "Cook the aromatics until tender."),
         step.mix(`Stir the ${sauce}`, "tomato", 86, "Mix until the pot looks glossy and rich."),
         step.heat(`Simmer the ${main}`, 100, "Keep the soup at a gentle simmer."),
@@ -623,7 +660,7 @@ function getGeneratedRecipeSteps(template, difficulty, main, accent, sauce, garn
         step.plate(`Serve the Soup`, "Soup", 6, "Serve the soup in neat warm bowls."),
       ],
       rice: [
-        step.slice(`Prep the ${main}`, { goal: 4, ingredientLabel: `${main} Prep`, startColor: "#ffd4ba", endColor: "#f0ad8c" }),
+        makePrepStep(`Prep the ${main}`, `${main} Prep`, seed + 2),
         step.mix(`Whisk the ${sauce}`, "soy", 86, "Whisk until the sauce turns smooth."),
         step.heat(`Cook the ${main}`, 98, "Keep the skillet hot enough to cook everything through."),
         step.portion(`Fill the ${accent} Bowls`, accent, 8, `Portion the ${accent.toLowerCase()} evenly into bowls.`),
@@ -631,7 +668,7 @@ function getGeneratedRecipeSteps(template, difficulty, main, accent, sauce, garn
         step.plate(`Serve the Bowls`, "Bowls", 6, "Arrange the bowls neatly for serving."),
       ],
       traybake: [
-        step.slice(`Prep the ${accent}`, { goal: 4, ingredientLabel: `${accent} Prep`, startColor: "#ffbe7a", endColor: "#79c98b" }),
+        makePrepStep(`Prep the ${accent}`, `${accent} Prep`, seed + 3),
         step.season(`Season the ${main}`, "Seasoning", 5, "Season the tray ingredients in the sweet spot."),
         step.portion(`Arrange on the Tray`, accent, 8, "Spread everything evenly across the tray."),
         step.heat(`Roast the ${main}`, 100, "Roast until the edges turn golden."),
@@ -639,7 +676,7 @@ function getGeneratedRecipeSteps(template, difficulty, main, accent, sauce, garn
         step.plate(`Serve the Tray`, "Roast", 6, "Plate the roasted pieces neatly."),
       ],
       tacos: [
-        step.slice(`Prep the ${main}`, { goal: 4, ingredientLabel: `${main} Prep`, startColor: "#ffd4ba", endColor: "#f0ad8c" }),
+        makePrepStep(`Prep the ${main}`, `${main} Prep`, seed + 4),
         step.heat(`Cook the ${main}`, 98, "Cook until the filling turns savory and hot."),
         step.season(`Add the ${sauce}`, sauce, 5, `Season the filling right into the heart zone.`),
         step.portion(`Fill the ${accent}`, accent, 8, `Portion the filling evenly into the ${accent.toLowerCase()}.`),
@@ -649,13 +686,13 @@ function getGeneratedRecipeSteps(template, difficulty, main, accent, sauce, garn
       noodle: [
         step.heat(`Boil the ${main}`, 96, "Cook the noodles until springy."),
         step.mix(`Whisk the ${sauce}`, "soy", 88, "Whisk until the sauce turns silky."),
-        step.slice(`Prep the ${accent}`, { goal: 4, ingredientLabel: `${accent} Prep`, startColor: "#9fd89f", endColor: "#7ab6d6" }),
+        makePrepStep(`Prep the ${accent}`, `${accent} Prep`, seed + 5),
         step.mix(`Toss the Noodles`, "soy", 90, "Coat the noodles evenly in sauce."),
         step.season(`Add the ${garnish}`, garnish, 5, `Season the bowl with ${garnish.toLowerCase()} in the sweet spot.`),
         step.plate(`Serve the Noodles`, "Noodles", 6, "Twirl the noodles neatly into bowls."),
       ],
       bake: [
-        step.slice(`Prep the ${main}`, { goal: 4, ingredientLabel: `${main} Prep`, startColor: "#ffbe7a", endColor: "#79c98b" }),
+        makePrepStep(`Prep the ${main}`, `${main} Prep`, seed + 6),
         step.mix(`Whisk the ${sauce}`, "carbonara", 86, "Whisk until the bake sauce turns smooth."),
         step.portion(`Fill the Bake Dish`, accent, 8, "Spread the bake evenly into the dish."),
         step.season(`Add the ${garnish}`, garnish, 5, `Add the ${garnish.toLowerCase()} topping into the heart zone.`),
@@ -663,14 +700,14 @@ function getGeneratedRecipeSteps(template, difficulty, main, accent, sauce, garn
         step.plate(`Serve the Bake`, "Bake", 6, "Serve the bake in tidy portions."),
       ],
     };
-    return mediumStepsByTemplate[template];
+    return remixGeneratedSteps(mediumStepsByTemplate[template], seed);
   }
 
   const hardStepsByTemplate = {
     pastry: [
       step.mix(`Whisk the ${accent}`, "vanilla", 88, "Whisk until the filling turns smooth."),
       step.portion(`Fill the Pastry`, accent, 8, "Spread the filling evenly over the crust."),
-      step.slice(`Prep the ${main}`, { goal: 5, ingredientLabel: `${main} Prep`, startColor: "#ffc0c8", endColor: "#f2a15d" }),
+      makePrepStep(`Prep the ${main}`, `${main} Prep`, seed, 5),
       step.knead(`Shape the Pastry`, 10, "Fold and shape the pastry into a neat finish."),
       step.heat(`Bake the ${main} Tart`, 102, "Bake until the crust turns deep golden."),
       step.mix(`Make the ${sauce}`, "vanilla", 84, "Whisk until the topping turns glossy."),
@@ -678,7 +715,7 @@ function getGeneratedRecipeSteps(template, difficulty, main, accent, sauce, garn
       step.plate(`Serve the Tart`, "Tart", 7, "Plate the tart in tidy slices."),
     ],
     curry: [
-      step.slice(`Prep the ${main}`, { goal: 5, ingredientLabel: `${main} Prep`, startColor: "#ffd4ba", endColor: "#f0ad8c" }),
+      makePrepStep(`Prep the ${main}`, `${main} Prep`, seed + 1, 5),
       step.heat(`Cook the ${main}`, 98, "Cook until the base turns savory and hot."),
       step.mix(`Whisk the ${sauce}`, "soy", 88, "Whisk until the curry turns smooth."),
       step.season(`Add the ${garnish}`, garnish, 5, `Season the curry in the center zone.`),
@@ -688,7 +725,7 @@ function getGeneratedRecipeSteps(template, difficulty, main, accent, sauce, garn
       step.season(`Finish with ${garnish}`, garnish, 5, `Add a final ${garnish.toLowerCase()} finish.`),
     ],
     noodlefeast: [
-      step.slice(`Prep the ${main}`, { goal: 5, ingredientLabel: `${main} Prep`, startColor: "#ffd4ba", endColor: "#f0ad8c" }),
+      makePrepStep(`Prep the ${main}`, `${main} Prep`, seed + 2, 5),
       step.heat(`Cook the ${main}`, 100, "Cook until the main topping turns glossy and hot."),
       step.heat(`Boil the ${accent}`, 96, "Cook the noodles until springy."),
       step.mix(`Whisk the ${sauce}`, "soy", 90, "Whisk until the sauce turns smooth."),
@@ -708,7 +745,7 @@ function getGeneratedRecipeSteps(template, difficulty, main, accent, sauce, garn
       step.season(`Finish the Cake`, garnish, 5, `Add a final finish in the heart zone.`),
     ],
     stuffed: [
-      step.slice(`Prep the ${main}`, { goal: 5, ingredientLabel: `${main} Prep`, startColor: "#ffbe7a", endColor: "#79c98b" }),
+      makePrepStep(`Prep the ${main}`, `${main} Prep`, seed + 3, 5),
       step.mix(`Make the ${accent} Filling`, "carbonara", 88, "Mix until the filling comes together."),
       step.portion(`Fill the ${main}`, accent, 8, `Portion the filling evenly into each ${main.toLowerCase()}.`),
       step.knead(`Shape the Tops`, 10, "Tuck the tops neatly into place."),
@@ -718,12 +755,12 @@ function getGeneratedRecipeSteps(template, difficulty, main, accent, sauce, garn
       step.season(`Finish with ${garnish}`, garnish, 5, `Add the ${garnish.toLowerCase()} finish.`),
     ],
     feast: [
-      step.slice(`Prep the ${accent}`, { goal: 5, ingredientLabel: `${accent} Prep`, startColor: "#ffbe7a", endColor: "#79c98b" }),
+      makePrepStep(`Prep the ${accent}`, `${accent} Prep`, seed + 4, 5),
       step.season(`Season the ${main}`, "Seasoning", 5, "Season the roast components in the sweet spot."),
       step.portion(`Arrange the Platter`, accent, 8, "Spread the platter ingredients evenly."),
       step.heat(`Roast the ${main}`, 102, "Roast until the platter turns golden and hot."),
       step.mix(`Whisk the ${sauce}`, "soy", 84, "Whisk until the sauce turns glossy."),
-      step.slice(`Carve the ${main}`, { goal: 4, ingredientLabel: `${main} Carving`, appearance: "chicken", startColor: "#ffd4ba", endColor: "#f0ad8c" }),
+      makePrepStep(`Carve the ${main}`, `${main} Carving`, seed + 5, 4, "chicken"),
       step.plate(`Build the Feast`, "Feast", 7, "Arrange the feast neatly across the platter."),
       step.season(`Finish with ${garnish}`, garnish, 5, `Add the ${garnish.toLowerCase()} finish in the heart zone.`),
     ],
@@ -738,7 +775,7 @@ function getGeneratedRecipeSteps(template, difficulty, main, accent, sauce, garn
       step.season(`Finish with ${garnish}`, garnish, 5, `Add the ${garnish.toLowerCase()} finish.`),
     ],
   };
-  return hardStepsByTemplate[template];
+  return remixGeneratedSteps(hardStepsByTemplate[template], seed);
 }
 
 function createGeneratedRecipe([name, template, main, accent, sauce, garnish], difficulty, index) {
@@ -748,17 +785,18 @@ function createGeneratedRecipe([name, template, main, accent, sauce, garnish], d
     Hard: { pointsStart: 21020, pointStep: 180, rewardStart: 906, rewardStep: 10, servings: "Serves 6" },
   };
   const config = difficultyConfig[difficulty];
+  const seed = hashString(`${name}-${difficulty}-${template}-${main}-${accent}-${sauce}-${garnish}`);
   return {
     id: slugifyRecipeName(name),
     name,
     difficulty,
     requiredPoints: config.pointsStart + index * config.pointStep,
     servings: config.servings,
-    summary: getGeneratedRecipeSummary(template, main, accent, sauce, garnish),
-    ingredients: getGeneratedRecipeIngredients(template, difficulty, main, accent, sauce, garnish),
-    method: getGeneratedRecipeMethod(template, difficulty, main, accent, sauce, garnish),
+    summary: getGeneratedRecipeSummary(name, template, main, accent, sauce, garnish, seed),
+    ingredients: getGeneratedRecipeIngredients(template, difficulty, main, accent, sauce, garnish, seed),
+    method: getGeneratedRecipeMethod(template, difficulty, main, accent, sauce, garnish, seed),
     baseReward: config.rewardStart + index * config.rewardStep,
-    steps: getGeneratedRecipeSteps(template, difficulty, main, accent, sauce, garnish),
+    steps: getGeneratedRecipeSteps(template, difficulty, main, accent, sauce, garnish, seed),
   };
 }
 
